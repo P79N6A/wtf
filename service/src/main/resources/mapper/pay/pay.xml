@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.pay.dao.UpayDao">
+	
+	<!-- 获取订单详情 -->
+	<select id="getOrderByOrderBh" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean"	resultType="cn.tc.ulife.platform.server.shop.model.OrderBean">
+		SELECT O.id,o.pid,O.porderbh,O.orderbh,O.uid,O.uname,O.tel,O.dz,O.sprice,O.yzj,
+					O.zhzj,O.gtime,O.sjzl,O.ssje,O.psf,co.name oztname,O.ozt,O.oly,
+					O.xqid,c.name as xqname, O.isyhj,O.ywjje,O.hdyhjid,O.iscx,O.cxid,O.isjf,O.jfje,
+		O.zfzt,c1.name zffs,o.zffs zffscode, o.zffs as zffss,O.psfs,o.remark 
+		FROM T_SC_ORDER O 
+		LEFT JOIN t_community c ON O.XQID = c.CID
+		LEFT JOIN t_sys_code co ON CONVERT(O.OZT USING utf8)=CONVERT(co.CODE USING utf8) AND co.TYPE=0
+		LEFT JOIN t_sys_code c1 ON CONVERT(O.ZFFS USING utf8)=CONVERT(c1.CODE USING utf8) AND c1.TYPE=2
+		WHERE O.ORDERBH=#{orderbh}
+	</select>	
+	
+	<!--订单进度查询  -->
+	<select id="getOrderProgress" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="cn.tc.ulife.platform.server.shop.model.OrderBean">
+		SELECT 
+		MAX(CASE T.CODE WHEN 'XDSJ' THEN T.CTIME ELSE 0 END ) xdsj,
+		MAX(CASE T.CODE WHEN 'ZFSJ' THEN T.CTIME ELSE 0 END ) zfsj,
+		MAX(CASE T.CODE WHEN 'FHSJ' THEN T.CTIME ELSE 0 END ) fhsj,
+		MAX(CASE T.CODE WHEN 'WCSJ' THEN T.CTIME ELSE 0 END ) wcsj
+		FROM (
+				SELECT O.GTIME CTIME,'XDSJ' CODE  FROM  T_SC_ORDER O WHERE O.ORDERBH=#{orderbh}
+			UNION ALL 
+				SELECT L.CTIME, 'ZFSJ' CODE FROM  T_ZF_ORDER L WHERE L.localorder=#{orderbh}
+			UNION ALL
+				SELECT MAX(L.CZSJ) CTIME, 'FHSJ' CODE FROM T_SC_ORDER O 
+				INNER JOIN T_SC_ORDERLOG L ON O.ORDERBH=L.PDDBH AND L.CZLX LIKE '%发货'
+				WHERE O.ORDERBH=#{orderbh}
+			UNION ALL
+				SELECT L.CZSJ CTIME,'WCSJ' CODE FROM T_SC_ORDER O 
+				INNER JOIN T_SC_ORDERLOG L ON O.ORDERBH=L.PDDBH AND L.CZLX LIKE '%完成%'
+				WHERE O.ORDERBH=#{orderbh}
+			)T
+	</select>
+	
+	<!--订单商品信息-->
+	<select id="getOrderGoodsInfo" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="cn.tc.ulife.platform.server.shop.model.OrderBean">
+		SELECT S.orderbh,S.PORDERBH,O.sjname,O.zhzj,O.gtime,C.NAME ozt,O.psrq,O.yzj, 
+		S.spname,S.dgsl,S.sprice,CONCAT(S.ggsz,S.ggdw)ggdw,
+		(SELECT sp.LOGO FROM t_sc_spxx sp WHERE sp.id=O.SPID) as logo
+		FROM T_SC_ORDER O 
+		INNER JOIN T_SC_ORDER S ON O.ID=S.PID
+		INNER JOIN t_sys_code C ON CONVERT(O.OZT USING utf8)=CONVERT(C.CODE USING utf8) AND C.TYPE=0
+		LEFT JOIN t_sc_spgg g on S.GGID = g.ID 
+		WHERE O.Porderbh=#{orderbh}
+	</select>
+	
+	
+	<!-- 获取订单日志 -->
+	<select id="getOrderLog" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean"	resultType="cn.tc.ulife.platform.server.shop.model.OrderLogBean">
+		SELECT A.id,A.ddid,A.ddbh,A.pddid,A.pddbh,A.czlx,A.czsj,A.czip,A.czly,A.userlx,
+		CASE WHEN A.userlx=1 THEN (SELECT ANAME FROM T_KF_KFXX WHERE ID=A.CZR) ELSE (SELECT Account FROM t_u_baseuser WHERE ID=A.CZR) END czr
+		FROM T_SC_ORDERLOG A
+		WHERE A.pddbh=#{orderbh}
+		order by A.czsj desc
+	</select>
+	
+	
+	<select id="queryPayment" resultType="cn.tc.ulife.platform.server.pay.model.UpayFsBean"
+		parameterType="cn.tc.ulife.platform.server.pay.model.UpayFsBean">
+		select * from T_ZF_FS
+		<if test="zmc!=null and zmc!= '' ">
+			WHERE zmc LIKE '%${zmc}%'
+        </if>
+	</select>
+	
+	<select id="queryPaymentTotal" resultType="int" parameterType="cn.tc.ulife.platform.server.pay.model.UpayFsBean">
+		select count(1) from T_ZF_FS
+		<if test="zmc!=null and zmc!= '' ">
+			WHERE zmc LIKE '%${zmc}%'
+        </if>
+	</select>
+
+	<insert id="savePayFs" parameterType="cn.tc.ulife.platform.server.pay.model.UpayFsBean">
+		insert into
+		T_ZF_FS(zmc,zt,ctime,uid,zfee) values(#{zmc}, #{zt},
+		now(),#{uid},#{zfee})
+	</insert>
+
+	<update id="updPayFs" parameterType="cn.tc.ulife.platform.server.pay.model.UpayFsBean">
+		update T_ZF_FS set zmc =
+		#{zmc}, zt=#{zt}, uid=#{uid},zfee=#{zfee},ctime=now() where ZID=#{ZID}
+	</update>
+
+	<select id="queryPayOrderExport" parameterType="cn.tc.ulife.platform.server.pay.model.PayOrderBean"
+		resultType="cn.tc.ulife.platform.server.pay.model.PayOrderBean">
+		SELECT AR.NAME arid,CO.NAME COMID ,A.Account ANAME,D.ORDERBH ,O.ZACCOUNT,
+		CASE WHEN O.ATYPE =1 THEN '银联' WHEN O.ATYPE =2 THEN '支付宝'WHEN O.ATYPE =3 THEN '微信' END ATYPE,
+		O.DPRICE,O.TACCOUNT,O.CTIME,O.PAYORDER,O.LOCALORDER
+		FROM T_ZF_ORDER O
+		LEFT JOIN t_u_baseuser A ON O.UID=A.ID
+		LEFT JOIN T_SC_ORDER D ON O.DDID=D.ID
+		LEFT JOIN t_community CO ON D.XQID=CO.CID
+		LEFT JOIN t_area AR ON CO.AreaID=AR.AID
+		WHERE 1=1
+		<if test="zaccount!=null and zaccount!= '' ">
+			AND  CONCAT_WS('^',O.ZACCOUNT,A.Account,D.ORDERBH) LIKE '%${zaccount}%'
+        </if>
+        <if test="atype!=null and atype!= '' ">
+			AND O.atype = #{atype}
+        </if>
+        <if test="comid!=null and comid!= '' ">
+			AND D.XQID = #{comid}
+        </if>
+		<if test="arid!=null and arid!= '' ">
+			AND AR.AID =#{arid} 
+        </if>
+		<if test="ctime!=null and ctime!= '' ">
+			<![CDATA[ AND O.ctime > #{ctime} ]]>
+		</if>
+		<if test="utime!=null and utime!= '' ">
+		<![CDATA[	AND O.utime < #{utime} ]]>
+		</if>
+		order by O.CTIME desc 
+	</select>
+
+	<select id="queryPayOrder" parameterType="cn.tc.ulife.platform.server.pay.model.PayOrderBean"
+		resultType="cn.tc.ulife.platform.server.pay.model.PayOrderBean">
+		SELECT AR.NAME arid , CO.NAME COMID , O.LID,O.UID,O.ZACCOUNT,O.UTYPE,O.ATYPE,O.DTYPE,O.DDID,O.DPRICE,O.TACCOUNT,O.CTIME,O.UTIME,O.USTATE,O.PAYORDER,
+		O.LOCALORDER,A.Account  ANAME,D.ORDERBH 
+		FROM T_ZF_ORDER O
+		LEFT JOIN t_u_baseuser A ON O.UID=A.ID
+		LEFT JOIN T_SC_ORDER D ON O.DDID=D.ID
+		LEFT JOIN t_community CO ON D.XQID=CO.CID
+		LEFT JOIN t_area AR ON CO.AreaID=AR.AID
+		WHERE 1=1
+		<if test="zaccount!=null and zaccount!= '' ">
+			AND  CONCAT_WS('^',O.ZACCOUNT,A.Account,D.ORDERBH) LIKE '%${zaccount}%'
+        </if>
+        <if test="atype!=null and atype!= '' ">
+			AND O.atype = #{atype}
+        </if>
+        <if test="comid!=null and comid!= '' ">
+			AND D.XQID = #{comid}
+        </if>
+		<if test="arid!=null and arid!= '' ">
+			AND AR.AID =#{arid} 
+        </if>
+		<if test="ctime!=null and ctime!= '' ">
+			<![CDATA[ AND O.ctime > #{ctime} ]]>
+		</if>
+		<if test="utime!=null and utime!= '' ">
+		<![CDATA[	AND O.utime < #{utime} ]]>
+		</if>
+		order by O.CTIME desc limit #{start}, #{limit}
+	</select>
+
+	<select id="queryPayOrderTotal" parameterType="cn.tc.ulife.platform.server.pay.model.PayOrderBean"
+		resultType="int">
+		SELECT COUNT(O.LID) 
+		FROM T_ZF_ORDER O
+		LEFT JOIN t_u_baseuser A ON O.UID=A.ID
+		LEFT JOIN T_SC_ORDER D ON O.DDID=D.ID
+		LEFT JOIN t_community CO ON D.XQID=CO.CID
+		LEFT JOIN t_area AR ON CO.AreaID=AR.AID
+		WHERE 1=1
+		<if test="zaccount!=null and zaccount!= '' ">
+			AND  CONCAT_WS('^',O.ZACCOUNT,A.Account,D.ORDERBH) LIKE '%${zaccount}%'
+        </if>
+        <if test="atype!=null and atype!= '' ">
+			AND O.atype = #{atype}
+        </if>
+        <if test="comid!=null and comid!= '' ">
+			AND D.XQID = #{comid}
+        </if>
+		<if test="arid!=null and arid!= '' ">
+			AND AR.AID =#{arid} 
+        </if>
+		<if test="ctime!=null and ctime!= '' ">
+			<![CDATA[ AND O.ctime > #{ctime} ]]>
+		</if>
+		<if test="utime!=null and utime!= '' ">
+		<![CDATA[	AND O.utime < #{utime} ]]>
+		</if>
+	</select>
+
+	<select id="queryPayOrderInfo" parameterType="cn.tc.ulife.platform.server.pay.model.PayOrderBean"
+		resultType="cn.tc.ulife.platform.server.pay.model.PayOrderBean">
+		<if test="utype != null and utype != '' and utype == 0">
+			select  A.ORDERBH, o.*,u.Account   ANAME from T_ZF_ORDER o inner join
+			t_u_baseuser u on o.uid = u.id INNER JOIN T_SC_ORDER A on o.ddid=A.id where O.lID = #{lID} 
+		</if>
+		<if test="utype != null and utype != '' and utype != 0">
+			select A.ORDERBH,o.*, u.Account ANAME from T_ZF_ORDER o inner join
+			t_u_baseuser u on o.uid = u.id INNER JOIN T_SC_ORDER A on o.ddid=A.id where O.lID = #{lID} 
+		</if>
+	</select>
+	
+	<select id="getOrderInfo" parameterType="cn.tc.ulife.platform.server.pay.model.PayOrderBean"
+		resultType="cn.tc.ulife.platform.server.pay.model.PayOrderBean">
+		select  A.ORDERBH, o.*,u.ANAME from T_ZF_ORDER o inner join
+			T_U_ACCOUNT u on o.uid = u.id INNER JOIN T_SC_ORDER A on o.ddid=A.id where O.ddid = #{lID} 
+	</select>
+</mapper>

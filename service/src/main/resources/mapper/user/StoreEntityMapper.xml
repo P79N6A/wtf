@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.user.dao.StoreEntityMapper">
+    <resultMap id="StoreBaseResultMap" type="cn.tc.ulife.platform.server.user.model.StoreEntity">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="TEL" property="tel" jdbcType="VARCHAR"/>
+        <result column="RESPONSIBLEID" property="responsibleId" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="SJMS" property="sjms" jdbcType="VARCHAR"/>
+        <result column="REMARK" property="remark" jdbcType="VARCHAR"/>
+        <result column="SPRICE" property="sprice" jdbcType="VARCHAR"/>
+        <result column="FARE" property="fare" jdbcType="VARCHAR"/>
+        <result column="FJF" property="fjf" jdbcType="VARCHAR"/>
+        <result column="KTIME" property="ktime" jdbcType="VARCHAR"/>
+        <result column="JTIME" property="jtime" jdbcType="VARCHAR"/>
+        <result column="ISPS" property="isps" jdbcType="VARCHAR"/>
+        <result column="STRA" property="stra" jdbcType="VARCHAR"/>
+        <result column="DJL" property="djl" jdbcType="BIGINT"/>
+        <result column="CTIME" property="ctime" jdbcType="VARCHAR"/>
+        <result column="MTIME" property="mtime" jdbcType="VARCHAR"/>
+        <result column="ISRS" property="isrs" jdbcType="VARCHAR"/>
+        <result column="XH" property="xh" jdbcType="VARCHAR"/>
+        <result column="XZ" property="xz" jdbcType="VARCHAR"/>
+        <result column="LOGO" property="logo" jdbcType="VARCHAR"/>
+        <result column="IMAGE" property="image" jdbcType="VARCHAR"/>
+        <result column="ZT" property="zt" jdbcType="VARCHAR"/>
+        <result column="TYPE" property="type" jdbcType="VARCHAR"/>
+        <result column="ISJF" property="isjf" jdbcType="VARCHAR"/>
+        <result column="JFJE" property="jfje" jdbcType="VARCHAR"/>
+        <result column="PLINE" property="pline" jdbcType="VARCHAR"/>
+        <result column="ZK" property="zk" jdbcType="VARCHAR"/>
+        <result column="LAT" property="lat" jdbcType="VARCHAR"/>
+        <result column="LNG" property="lng" jdbcType="VARCHAR"/>
+        <result column="ISYHFLAG" property="isyhflag" jdbcType="VARCHAR"/>
+        <result column="IMAGE2" property="image2" jdbcType="VARCHAR"/>
+        <result column="IMAGE3" property="image3" jdbcType="VARCHAR"/>
+        <result column="IMAGE4" property="image4" jdbcType="VARCHAR"/>
+        <result column="IMAGE5" property="image5" jdbcType="VARCHAR"/>
+        <result column="IMAGE6" property="image6" jdbcType="VARCHAR"/>
+        <result column="RCODE" property="rcode" jdbcType="VARCHAR"/>
+        <result column="COMMNAMES" property="commNames" jdbcType="VARCHAR"/>
+        <result column="RELATIONACCOUNT" property="relationAccount" jdbcType="VARCHAR"/>
+        <result column="PLINENAME" property="plineName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Store_Base_Column_List">
+    STORE.ID, STORE.NAME, STORE.ADDRESS, STORE.TEL, STORE.RESPONSIBLEID, STORE.MOBILE, STORE.SJMS, STORE.REMARK, STORE.SPRICE,
+     STORE.FARE, STORE.FJF, STORE.KTIME,
+    STORE.JTIME, STORE.ISPS, STORE.STRA, STORE.DJL, STORE.CTIME, STORE.MTIME, STORE.ISRS, STORE.XH, STORE.XZ, STORE.LOGO,
+     STORE.IMAGE, STORE.ZT, STORE.TYPE, STORE.ISJF,
+    STORE.JFJE, STORE.PLINE, STORE.ZK, STORE.LAT, STORE.LNG, STORE.ISYHFLAG, STORE.IMAGE2, STORE.IMAGE3, STORE.IMAGE4,
+    STORE.IMAGE5, STORE.IMAGE6
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="StoreBaseResultMap" parameterType="String">
+        SELECT
+        <include refid="Store_Base_Column_List"/>
+        FROM T_SC_STORE STORE
+        WHERE STORE.ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertStore" parameterType="cn.tc.ulife.platform.server.user.model.StoreEntity">
+        INSERT INTO T_SC_STROE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="address != null">
+                ADDRESS,
+            </if>
+            <if test="tel != null">
+                TEL,
+            </if>
+            <if test="responsibleId != null">
+                RESPONSIBLEID,
+            </if>
+            <if test="mobile != null">
+                MOBILE,
+            </if>
+            <if test="sjms != null">
+                SJMS,
+            </if>
+            <if test="remark != null">
+                REMARK,
+            </if>
+            <if test="sprice != null">
+                SPRICE,
+            </if>
+            <if test="fare != null">
+                FARE,
+            </if>
+            <if test="fjf != null">
+                FJF,
+            </if>
+            <if test="ktime != null">
+                KTIME,
+            </if>
+            <if test="jtime != null">
+                JTIME,
+            </if>
+            <if test="isps != null">
+                ISPS,
+            </if>
+            <if test="stra != null">
+                STRA,
+            </if>
+            <if test="djl != null">
+                DJL,
+            </if>
+            <if test="ctime != null">
+                CTIME,
+            </if>
+            <if test="mtime != null">
+                MTIME,
+            </if>
+            <if test="isrs != null">
+                ISRS,
+            </if>
+            <if test="xh != null">
+                XH,
+            </if>
+            <if test="xz != null">
+                XZ,
+            </if>
+            <if test="logo != null">
+                LOGO,
+            </if>
+            <if test="image != null">
+                IMAGE,
+            </if>
+            <if test="zt != null">
+                ZT,
+            </if>
+            <if test="type != null">
+                TYPE,
+            </if>
+            <if test="isjf != null">
+                ISJF,
+            </if>
+            <if test="jfje != null">
+                JFJE,
+            </if>
+            <if test="pline != null">
+                PLINE,
+            </if>
+            <if test="zk != null">
+                ZK,
+            </if>
+            <if test="lat != null">
+                LAT,
+            </if>
+            <if test="lng != null">
+                LNG,
+            </if>
+            <if test="isyhflag != null">
+                ISYHFLAG,
+            </if>
+            <if test="image2 != null">
+                IMAGE2,
+            </if>
+            <if test="image3 != null">
+                IMAGE3,
+            </if>
+            <if test="image4 != null">
+                IMAGE4,
+            </if>
+            <if test="image5 != null">
+                IMAGE5,
+            </if>
+            <if test="image6 != null">
+                IMAGE6,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="responsibleId != null">
+                #{responsibleId,jdbcType=BIGINT},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="sjms != null">
+                #{sjms,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="sprice != null">
+                #{sprice,jdbcType=VARCHAR},
+            </if>
+            <if test="fare != null">
+                #{fare,jdbcType=VARCHAR},
+            </if>
+            <if test="fjf != null">
+                #{fjf,jdbcType=VARCHAR},
+            </if>
+            <if test="ktime != null">
+                #{ktime,jdbcType=VARCHAR},
+            </if>
+            <if test="jtime != null">
+                #{jtime,jdbcType=VARCHAR},
+            </if>
+            <if test="isps != null">
+                #{isps,jdbcType=CHAR},
+            </if>
+            <if test="stra != null">
+                #{stra,jdbcType=INTEGER},
+            </if>
+            <if test="djl != null">
+                #{djl,jdbcType=BIGINT},
+            </if>
+            <if test="ctime != null">
+                #{ctime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mtime != null">
+                #{mtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isrs != null">
+                #{isrs,jdbcType=CHAR},
+            </if>
+            <if test="xh != null">
+                #{xh,jdbcType=INTEGER},
+            </if>
+            <if test="xz != null">
+                #{xz,jdbcType=CHAR},
+            </if>
+            <if test="logo != null">
+                #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                #{zt,jdbcType=CHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=CHAR},
+            </if>
+            <if test="isjf != null">
+                #{isjf,jdbcType=VARCHAR},
+            </if>
+            <if test="jfje != null">
+                #{jfje,jdbcType=VARCHAR},
+            </if>
+            <if test="pline != null">
+                #{pline,jdbcType=BIGINT},
+            </if>
+            <if test="zk != null">
+                #{zk,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null">
+                #{lat,jdbcType=VARCHAR},
+            </if>
+            <if test="lng != null">
+                #{lng,jdbcType=VARCHAR},
+            </if>
+            <if test="isyhflag != null">
+                #{isyhflag,jdbcType=CHAR},
+            </if>
+            <if test="image2 != null">
+                #{image2,jdbcType=VARCHAR},
+            </if>
+            <if test="image3 != null">
+                #{image3,jdbcType=VARCHAR},
+            </if>
+            <if test="image4 != null">
+                #{image4,jdbcType=VARCHAR},
+            </if>
+            <if test="image5 != null">
+                #{image5,jdbcType=VARCHAR},
+            </if>
+            <if test="image6 != null">
+                #{image6,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateStoreByPrimaryKey" parameterType="cn.tc.ulife.platform.server.user.model.StoreEntity">
+        UPDATE T_SC_STORE
+        <set>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                TEL = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="responsibleId != null">
+                responsibleId = #{responsibleId,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                MOBILE = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="sjms != null">
+                SJMS = #{sjms,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="sprice != null">
+                SPRICE = #{sprice,jdbcType=VARCHAR},
+            </if>
+            <if test="fare != null">
+                FARE = #{fare,jdbcType=VARCHAR},
+            </if>
+            <if test="fjf != null">
+                FJF = #{fjf,jdbcType=VARCHAR},
+            </if>
+            <if test="ktime != null">
+                KTIME = #{ktime,jdbcType=VARCHAR},
+            </if>
+            <if test="jtime != null">
+                JTIME = #{jtime,jdbcType=VARCHAR},
+            </if>
+            <if test="isps != null">
+                ISPS = #{isps,jdbcType=VARCHAR},
+            </if>
+            <if test="stra != null">
+                STRA = #{stra,jdbcType=INTEGER},
+            </if>
+            <if test="djl != null">
+                DJL = #{djl,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                CTIME = #{ctime,jdbcType=VARCHAR},
+            </if>
+            <if test="mtime != null">
+                MTIME = #{mtime,jdbcType=VARCHAR},
+            </if>
+            <if test="isrs != null">
+                ISRS = #{isrs,jdbcType=VARCHAR},
+            </if>
+            <if test="xh != null">
+                XH = #{xh,jdbcType=VARCHAR},
+            </if>
+            <if test="xz != null">
+                XZ = #{xz,jdbcType=VARCHAR},
+            </if>
+            <if test="logo != null">
+                LOGO = #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                IMAGE = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                ZT = #{zt,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                TYPE = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="isjf != null">
+                ISJF = #{isjf,jdbcType=VARCHAR},
+            </if>
+            <if test="jfje != null">
+                JFJE = #{jfje,jdbcType=VARCHAR},
+            </if>
+            <if test="pline != null">
+                PLINE = #{pline,jdbcType=VARCHAR},
+            </if>
+            <if test="zk != null">
+                ZK = #{zk,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null">
+                LAT = #{lat,jdbcType=VARCHAR},
+            </if>
+            <if test="lng != null">
+                LNG = #{lng,jdbcType=VARCHAR},
+            </if>
+            <if test="isyhflag != null">
+                ISYHFLAG = #{isyhflag,jdbcType=VARCHAR},
+            </if>
+            <if test="image2 != null">
+                IMAGE2 = #{image2,jdbcType=VARCHAR},
+            </if>
+            <if test="image3 != null">
+                IMAGE3 = #{image3,jdbcType=VARCHAR},
+            </if>
+            <if test="image4 != null">
+                IMAGE4 = #{image4,jdbcType=VARCHAR},
+            </if>
+            <if test="image5 != null">
+                IMAGE5 = #{image5,jdbcType=VARCHAR},
+            </if>
+            <if test="image6 != null">
+                IMAGE6 = #{image6,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="selectStore" parameterType="map" resultMap="StoreBaseResultMap">
+        SELECT
+        <include refid="Store_Base_Column_List"/>
+        ,"SJGLY" AS RCODE,PL.NAME AS PLINENAME,
+        GROUP_CONCAT(TCOM.NAME) AS COMMNAMES, GROUP_CONCAT(BU.ACCOUNT) AS RELATIONACCOUNT
+        FROM T_SC_STORE STORE
+        INNER JOIN T_SYS_USERENTITY UE ON STORE.ID=UE.OID AND UE.RCODE="SJGLY"
+        INNER JOIN T_U_BASEUSER BU ON UE.UID=BU.ID
+        LEFT JOIN T_SYS_PLINEISSUED PLU ON PLU.UID=STORE.ID AND PLU.ZT=0
+        LEFT JOIN T_SC_PRODUCTLINE PL ON PLU.PID =PL.ID
+        LEFT JOIN T_SYS_UOCOM UO ON STORE.ID= UO.OID AND UO.RCODE="SJGLY"
+        LEFT JOIN T_COMMUNITY TCOM ON TCOM.CID=UO.COMID
+        WHERE STORE.CID=#{cid}
+        GROUP BY STORE.ID
+        LIMIT #{ofset},#{psize}
+    </select>
+
+
+    <select id="selectStoreCount" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM T_SC_STORE WHERE cid=#{cid}
+    </select>
+
+    <select id="checkStoreNameUnique" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM T_SC_STORE STORE WHERE STORE.NAME=#{name} AND  #{id}!=STORE.ID
+
+    </select>
+
+
+</mapper>

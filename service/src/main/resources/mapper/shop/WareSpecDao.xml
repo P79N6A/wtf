@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.WareSpecDao">
+
+    <insert id="addSpecification"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        INSERT INTO T_SC_SPGG (
+        <if test="spid != null">SPID,</if>
+        <if test="sptm != null">SPTM,</if>
+        <if test="ggsz != null">GGSZ,</if>
+        <if test="ggdw != null">GGDW,</if>
+        <if test="ggbz != null">GGBZ,</if>
+        <if test="jf != null">JF,</if>
+        <if test="sprice != null">SPRICE,</if>
+        <if test="cost != null">COST,</if>
+        <if test="spkc != null">SPKC,</if>
+        <if test="freecount != null">FREECOUNT,</if>
+        <if test="issj != null">ISSJ,</if>
+        <if test="yjz != null">YJZ,</if>
+        <if test="isyj != null">ISYJ,</if>
+        <if test="cgkc != null">CGKC,</if>
+        <if test="xh != null">XH,</if>
+        <if test="spzl != null">SPZL,</if>
+        <if test="mip != null">MIP,</if>
+        <if test="muid != null">MUID,</if>
+        <if test="isdefault != null">ISDEFAULT,</if>
+        <if test="smjsz != null">SMJSZ,</if>
+        <if test="pscs != null">PSCS,</if>
+        CTIME
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            <if test="spid != null">#{item.spid},</if>
+            <if test="sptm != null">#{item.sptm},</if>
+            <if test="ggsz != null">#{item.ggsz},</if>
+            <if test="ggdw != null">#{item.ggdw},</if>
+            <if test="ggbz != null">#{item.ggbz},</if>
+            <if test="jf != null">#{item.jf},</if>
+            <if test="sprice != null">#{item.sprice},</if>
+            <if test="cost != null">#{item.cost},</if>
+            <if test="spkc != null">#{item.spkc},</if>
+            <if test="freecount != null">#{item.freecount},</if>
+            <if test="issj != null">#{item.issj},</if>
+            <if test="yjz != null">#{item.yjz},</if>
+            <if test="isyj != null">#{item.isyj},</if>
+            <if test="cgkc != null">#{item.cgkc},</if>
+            <if test="xh != null">#{item.xh},</if>
+            <if test="spzl != null">#{item.spzl},</if>
+            <if test="mip != null">#{item.mip},</if>
+            <if test="muid != null">#{item.muid},</if>
+            <if test="isdefault != null">#{item.isdefault},</if>
+            <if test="smjsz != null">#{item.smjsz},</if>
+            <if test="pscs != null">#{item.pscs},</if>
+            now()
+            )
+        </foreach>
+    </insert>
+
+    <update id="delSpecification" parameterType="map">
+        UPDATE T_SC_SPGG SET ISSJ = '2' WHERE SPID = #{id}
+    </update>
+
+    <insert id="addSpecificationPage" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        INSERT INTO T_SC_SPGG (
+        <if test="spid != null">SPID,</if>
+        <if test="sptm != null">SPTM,</if>
+        <if test="ggsz != null">GGSZ,</if>
+        <if test="ggdw != null">GGDW,</if>
+        <if test="ggbz != null">GGBZ,</if>
+        <if test="jf != null">JF,</if>
+        <if test="sprice != null">SPRICE,</if>
+        <if test="cost != null">COST,</if>
+        <if test="spkc != null">SPKC,</if>
+        <if test="freecount != null">FREECOUNT,</if>
+        <if test="issj != null">ISSJ,</if>
+        <if test="yjz != null">YJZ,</if>
+        <if test="isyj != null">ISYJ,</if>
+        <if test="cgkc != null">CGKC,</if>
+        <if test="xh != null">XH,</if>
+        <if test="spzl != null">SPZL,</if>
+        <if test="mip != null">MIP,</if>
+        <if test="muid != null">MUID,</if>
+        <if test="isdefault != null">ISDEFAULT,</if>
+        <if test="smjsz != null">SMJSZ,</if>
+        <if test="pscs != null">PSCS,</if>
+        CTIME
+        )
+        VALUES
+        (
+        <if test="spid != null">#{spid},</if>
+        <if test="sptm != null">#{sptm},</if>
+        <if test="ggsz != null">#{ggsz},</if>
+        <if test="ggdw != null">#{ggdw},</if>
+        <if test="ggbz != null">#{ggbz},</if>
+        <if test="jf != null">#{jf},</if>
+        <if test="sprice != null">#{sprice},</if>
+        <if test="cost != null">#{cost},</if>
+        <if test="spkc != null">#{spkc},</if>
+        <if test="freecount != null">#{freecount},</if>
+        <if test="issj != null">'1',</if>
+        <if test="yjz != null">#{yjz},</if>
+        <if test="isyj != null">#{isyj},</if>
+        <if test="cgkc != null">#{cgkc},</if>
+        <if test="xh != null">#{xh},</if>
+        <if test="spzl != null">#{spzl},</if>
+        <if test="mip != null">#{mip},</if>
+        <if test="muid != null">#{muid},</if>
+        <if test="isdefault != null">#{isdefault},</if>
+        <if test="smjsz != null">#{smjsz},</if>
+        <if test="pscs != null">#{pscs},</if>
+        now()
+        )
+    </insert>
+
+    <update id="updSpecificationPage" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        UPDATE T_SC_SPGG SET
+        <if test="spid != null">SPID = #{spid},</if>
+        <if test="sptm != null">SPTM = #{sptm},</if>
+        <if test="ggsz != null">GGSZ = #{ggsz},</if>
+        <if test="ggdw != null">GGDW = #{ggdw},</if>
+        <if test="ggbz != null">GGBZ = #{ggbz},</if>
+        <if test="jf != null">JF = #{jf},</if>
+        <if test="sprice != null">SPRICE = #{sprice},</if>
+        <if test="cost != null">COST = #{cost},</if>
+        <if test="spkc != null">SPKC = #{spkc},</if>
+        <if test="freecount != null">FREECOUNT = #{freecount},</if>
+        <if test="issj != null">ISSJ = #{issj},</if>
+        <if test="yjz != null">YJZ = #{yjz},</if>
+        <if test="isyj != null">ISYJ = #{isyj},</if>
+        <if test="cgkc != null">CGKC = #{cgkc},</if>
+        <if test="xh != null">XH = #{xh},</if>
+        <if test="spzl != null">SPZL = #{spzl},</if>
+        <if test="mip != null">MIP = #{mip},</if>
+        <if test="muid != null">MUID = #{muid},</if>
+        <if test="isdefault != null">ISDEFAULT = #{isdefault},</if>
+        <if test="smjsz != null">SMJSZ = #{smjsz},</if>
+        <if test="pscs != null">PSCS = #{pscs},</if>
+        MTIME = now()
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updSpecificationList" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        UPDATE T_SC_SPGG SET
+        <if test="spid != null">SPID = #{spid},</if>
+        <if test="sptm != null">SPTM = #{sptm},</if>
+        <if test="ggsz != null">GGSZ = #{ggsz},</if>
+        <if test="ggdw != null">GGDW = #{ggdw},</if>
+        <if test="ggbz != null">GGBZ = #{ggbz},</if>
+        <if test="jf != null">JF = #{jf},</if>
+        <if test="sprice != null">SPRICE = #{sprice},</if>
+        <if test="cost != null">COST = #{cost},</if>
+        <if test="spkc != null">SPKC = #{spkc},</if>
+        <if test="freecount != null">FREECOUNT = #{freecount},</if>
+        <if test="issj != null">ISSJ = #{issj},</if>
+        <if test="yjz != null">YJZ = #{yjz},</if>
+        <if test="isyj != null">ISYJ = #{isyj},</if>
+        <if test="cgkc != null">CGKC = #{cgkc},</if>
+        <if test="xh != null">XH = #{xh},</if>
+        <if test="spzl != null">SPZL = #{spzl},</if>
+        <if test="mip != null">MIP = #{mip},</if>
+        <if test="muid != null">MUID = #{muid},</if>
+        <if test="isdefault != null">ISDEFAULT = #{isdefault},</if>
+        <if test="smjsz != null">SMJSZ = #{smjsz},</if>
+        <if test="pscs != null">PSCS = #{pscs},</if>
+        MTIME = now()
+        WHERE ID = #{id}
+    </update>
+
+    <select id="listWareSpecification" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        SELECT * FROM T_SC_SPGG WHERE SPID = #{id}
+    </select>
+
+    <select id="getWareSpecification" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.WareSpecEntity">
+        SELECT * FROM T_SC_SPGG WHERE ID = #{id}
+    </select>
+</mapper>

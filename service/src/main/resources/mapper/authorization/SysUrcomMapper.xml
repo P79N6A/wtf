@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.authorization.dao.SysUrcomMapper">
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.SysUrcom">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="URID" property="urid" jdbcType="VARCHAR"/>
+        <result column="UID" property="uid" jdbcType="VARCHAR"/>
+        <result column="RID" property="rid" jdbcType="VARCHAR"/>
+        <result column="RCODE" property="rcode" jdbcType="VARCHAR"/>
+        <result column="COMID" property="comId" jdbcType="VARCHAR"/>
+        <result column="ROOMID" property="roomId" jdbcType="VARCHAR"/>
+        <result column="ISDEF" property="isDef" jdbcType="VARCHAR"/>
+        <result column="CTIME" property="ctime" jdbcType="TIMESTAMP"/>
+        <result column="MTIME" property="mtime" jdbcType="TIMESTAMP"/>
+        <result column="ISREG" property="isReg" jdbcType="VARCHAR"/>
+        <result column="HRID" property="hrid" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, URID, UID, RID, RCODE, COMID, ROOMID, ISDEF, CTIME, MTIME, ISREG, HRID
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM T_SYS_URCOM
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="String">
+    DELETE FROM T_SYS_URCOM
+    WHERE ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insertSysUrcom" parameterType="cn.tc.ulife.platform.server.authorization.model.SysUrcom">
+    INSERT INTO T_SYS_URCOM (ID, URID, UID, RID,
+     RCODE, COMID, ROOMID,
+     ISDEF, CTIME, MTIME,
+     ISREG, HRID) VALUES (#{id,jdbcType=VARCHAR},  #{uid,jdbcType=VARCHAR}, #{rid,jdbcType=VARCHAR},
+     #{rcode,jdbcType=VARCHAR}, #{comId,jdbcType=VARCHAR}, #{roomId,jdbcType=VARCHAR},
+     #{isDef,jdbcType=VARCHAR},NOW(), #{mtime,jdbcType=TIMESTAMP},
+     #{isReg,jdbcType=VARCHAR}, #{hrid,jdbcType=VARCHAR})
+  </insert>
+
+    <select id="selectByKey" resultMap="BaseResultMap"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.SysUrcom">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM T_SYS_URCOM
+        WHERE UID = #{id,jdbcType=VARCHAR} AND COMID = #{comId,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="queryAuthCommList" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.authorization.model.AuthCommModel">
+        SELECT COMM.CID AS id ,COMM.NAME AS commName, CASE   IFNULL(UO.ID,0)   WHEN 0 THEN 0 ELSE 1  END  AS isCheck
+        FROM T_COMMUNITY COMM
+        LEFT JOIN T_SYS_UOCOM  UO ON COMM.CID =UO.COMID AND UO.RCODE=#{rcode} AND OID=#{entityId}
+        WHERE COMM.DELETED=0 AND COMM.AREAID=#{areaId}
+    </select>
+
+
+    <select id="queryStoreAuthCommList" parameterType="map"
+            resultType="String">
+
+        SELECT UO.COMID FROM T_SYS_UOCOM UO WHERE UO.RCODE=#{rcode} AND OID=#{entityId}
+    </select>
+
+
+    <select id="queryAgentIdByStoreId" parameterType="String" resultType="String">
+        SELECT  DLS.ID FROM T_SC_STORE STORE
+         INNER JOIN T_SYS_USERENTITY US ON US.UID=STORE.CID AND US.RCODE="DLS"
+        INNER JOIN T_SYS_DLS DLS ON DLS.ID =US.OID
+        WHERE STORE.ID =#{id}
+
+    </select>
+</mapper>

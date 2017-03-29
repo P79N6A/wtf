@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.utils.dao.ComCodeDao">
+	<!--根据当前用户角色获取其小区下拉框store -->
+	<select id="getRoleComm" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+		SELECT T.COMID ID,C.Name FROM T_SYS_URCOM T 
+		INNER JOIN T_COMMUNITY C ON T.COMID=C.CID
+		WHERE T.URID=#{bizid} AND C.Deleted='0'
+		<if test="name!=null and name!= '' ">
+			AND C.NAME LIKE '%${name}%'
+		</if>
+		ORDER BY T.CTIME
+	</select>
+	<!--获取所有代理商-->
+	<select id="getDlsStore" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+		SELECT u.ID,u.`NAME` FROM T_SYS_DLS u
+	</select>
+	
+	
+	<!--商品促销规则下拉框store-->
+	<select id="getyxgzStore" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+		SELECT T.ID,T.NAME,T.CODE FROM T_YX_MARKETGZ T 
+		WHERE T.CODE ='MANJCX'
+		ORDER BY T.XH
+	</select>
+	
+	<!--根据产品线获取商家-->
+	<select id="getStoreByPl" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+		SELECT T.ID,T.NAME from t_sc_store t WHERE XZ= #{id}
+	</select>
+	
+</mapper>

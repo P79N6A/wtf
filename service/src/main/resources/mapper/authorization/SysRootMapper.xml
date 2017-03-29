@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.authorization.dao.SysRootMapper">
+    <resultMap id="ButtonBaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.SysRootActionModel">
+        <id column="BUTTONID" property="id" jdbcType="VARCHAR"/>
+        <result column="BUTTONRID" property="rid" jdbcType="VARCHAR"/>
+        <result column="BUTTONNAME" property="name" jdbcType="VARCHAR"/>
+        <result column="BUTTONCODE" property="code" jdbcType="VARCHAR"/>
+        <result column="BUTTONURL" property="url" jdbcType="VARCHAR"/>
+        <result column="BUTTONSORT" property="sort" jdbcType="VARCHAR"/>
+        <result column="BUTTONJS" property="js" jdbcType="VARCHAR"/>
+        <result column="BUTTONCHECK" property="buttonCheck" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="RootBaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.SysRoot">
+        <id column="ROOTID" property="id" jdbcType="VARCHAR"/>
+        <result column="ROOTGROUPID" property="groupid" jdbcType="VARCHAR"/>
+        <result column="ROOTNAME" property="name" jdbcType="VARCHAR"/>
+        <result column="ROOTCODE" property="code" jdbcType="VARCHAR"/>
+        <result column="ROOTISLEAF" property="isleaf" jdbcType="VARCHAR"/>
+        <result column="ROOTURL" property="url" jdbcType="VARCHAR"/>
+        <result column="ROOTPID" property="pid" jdbcType="VARCHAR"/>
+        <result column="ROOTSORT" property="sort" jdbcType="VARCHAR"/>
+        <result column="ROOTISSUED" property="issued" jdbcType="VARCHAR"/>
+        <result column="ROOTCHECK" property="rootCheck" jdbcType="VARCHAR"/>
+        <collection property="sysRootActionModelList"
+                    ofType="cn.tc.ulife.platform.server.authorization.model.SysRootActionModel"
+                    javaType="ArrayList" resultMap="ButtonBaseResultMap"/>
+    </resultMap>
+
+
+    <resultMap id="ResouceBaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.ResourceFront">
+        <id column="RESOUCEID" property="resouceId" jdbcType="VARCHAR"/>
+        <result column="RESOUCEGROUPID" property="resouceGroupId" jdbcType="VARCHAR"/>
+        <result column="RESOUCENAME" property="resouceName" jdbcType="VARCHAR"/>
+        <result column="RESOUCECODE" property="resouceRoleCode" jdbcType="VARCHAR"/>
+        <result column="RESOUCEISLEAF" property="resouceIsleaf" jdbcType="VARCHAR"/>
+        <result column="RESOUCEURL" property="resouceUrl" jdbcType="VARCHAR"/>
+        <result column="RESOUCEPID" property="resoucePid" jdbcType="VARCHAR"/>
+        <result column="RESOUCESORT" property="resouceSort" jdbcType="VARCHAR"/>
+        <result column="RESOUCEISSUED" property="resouceIssued" jdbcType="VARCHAR"/>
+        <result column="RESOUCECHECK" property="resouceCheck" jdbcType="VARCHAR"/>
+        <collection property="sysRoots" ofType="cn.tc.ulife.platform.server.authorization.model.SysRoot"
+                    javaType="ArrayList" resultMap="RootBaseResultMap"/>
+    </resultMap>
+
+    <resultMap id="RoleBaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.GroupRootRole">
+        <id column="ROLEID" property="id" jdbcType="VARCHAR"/>
+        <result column="ROLENAME" property="roleName" jdbcType="VARCHAR"/>
+        <result column="ROLECODE" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="CREATETABLE" property="createTable" jdbcType="VARCHAR"/>
+        <result column="TABLENAME" property="tableName" jdbcType="VARCHAR"/>
+        <result column="CHANGESHARE" property="changeShare" jdbcType="VARCHAR"/>
+        <collection property="resouceFronts" ofType="cn.tc.ulife.platform.server.authorization.model.ResourceFront"
+                    javaType="ArrayList" resultMap="ResouceBaseResultMap"/>
+    </resultMap>
+
+
+    <resultMap id="EntityResultMap" type="cn.tc.ulife.platform.server.authorization.model.EntityModel">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="COMIDS" property="comId" jdbcType="VARCHAR"/>
+
+        <!--<collection property="comIds" column="COMMIDS" ofType="String" javaType="ArrayList"/>-->
+    </resultMap>
+    <sql id="Root_Base_Column_List">
+    ROOT.ID, ROOT.GROUPID, ROOT.NAME, ROOT.CODE, ROOT.LEVEL, ROOT.ISLEAF, ROOT.URL, ROOT.PID, ROOT.SORT, ROOT.CID,
+     ROOT.CTIME, ROOT.MTIME, ROOT.ZT, ROOT.TYPE,ROOT.ICON, ROOT.ISSUED
+  </sql>
+
+    <sql id="Menu_Button_Base_Column_List">
+     GROOT.ID AS ROLEID,
+    GROOT.NAME AS ROLENAME ,GROOT.CODE AS ROLECODE ,
+    GROOT.CREATE_TABLE AS CREATETABLE ,GROOT.TABLE_NAME AS TABLENAME,GROOT.CHANGE_SHARE AS CHANGESHARE,
+    OROOT.ID AS RESOUCEID ,OROOT.GROUPID AS RESOUCEGROUPID ,OROOT.NAME AS RESOUCENAME ,
+    OROOT.CODE AS RESOUCECODE ,OROOT.ISLEAF AS RESOUCEISLEAF ,OROOT.URL AS RESOUCEURL,
+    OROOT.PID AS RESOUCEPID,OROOT.SORT AS RESOUCESORT ,OROOT.ISSUED AS RESOUCEISSUED,
+    TROOT.ID AS ROOTID ,TROOT.GROUPID AS ROOTGROUPID ,TROOT.NAME AS ROOTNAME ,
+    TROOT.CODE AS ROOTCODE ,TROOT.ISLEAF AS ROOTISLEAF ,TROOT.URL AS ROOTURL,
+    TROOT.PID AS ROOTPID,TROOT.SORT AS ROOTSORT ,TROOT.ISSUED AS ROOTISSUED,
+    RACTION.ID AS BUTTONID ,RACTION.RID AS BUTTONRID ,RACTION.RCODE AS BUTTONRCODE ,RACTION.NAME AS BUTTONNAME,RACTION.CODE AS BUTTONCODE,
+    RACTION.URL AS BUTTONURL ,RACTION.SORT AS BUTTONSORT,RACTION.JS AS BUTTONJS
+    </sql>
+
+    <sql id="User_Login_Menu_Base_Column_List">
+
+        OROOT.ID AS RESOUCEID ,OROOT.GROUPID AS RESOUCEGROUPID ,OROOT.NAME AS RESOUCENAME ,
+        OROOT.CODE AS RESOUCECODE ,OROOT.ISLEAF AS RESOUCEISLEAF ,OROOT.URL AS RESOUCEURL,
+        OROOT.PID AS RESOUCEPID,OROOT.SORT AS RESOUCESORT ,OROOT.ISSUED AS RESOUCEISSUED
+
+    </sql>
+    <sql id="User_Login_Two_Menu__Column_List">
+          TROOT.ID AS ROOTID ,TROOT.GROUPID AS ROOTGROUPID ,TROOT.NAME AS ROOTNAME ,
+        TROOT.CODE AS ROOTCODE ,TROOT.ISLEAF AS ROOTISLEAF ,TROOT.URL AS ROOTURL,
+        TROOT.PID AS ROOTPID,TROOT.SORT AS ROOTSORT ,TROOT.ISSUED AS ROOTISSUED
+    </sql>
+
+    <sql id="User_Login_Button__Column_List">
+
+
+        RACTION.ID AS BUTTONID ,RACTION.RID AS BUTTONRID ,RACTION.RCODE AS BUTTONRCODE ,RACTION.NAME AS BUTTONNAME,RACTION.CODE AS BUTTONCODE,
+        RACTION.URL AS BUTTONURL ,RACTION.SORT AS BUTTONSORT,RACTION.JS AS BUTTONJS
+    </sql>
+    <select id="selectAuthMenuList" resultMap="RoleBaseResultMap" parameterType="map">
+        <!-- SELECT
+         <include refid="Menu_Button_Base_Column_List"/>
+         FROM
+         T_SYS_GROOT GROOT
+         INNER JOIN T_SYS_ROOT OROOT ON GROOT.ID =OROOT.GROUPID AND OROOT.ZT=0
+         INNER JOIN T_SYS_USERROOT OUSERROOT ON OROOT.ID =OUSERROOT.RID
+         <if test="uid!=null and uid !=''">
+             AND OUSERROOT.UID=#{uid}
+         </if>
+         LEFT JOIN T_SYS_ROOT TROOT ON OROOT.ID=TROOT.PID AND TROOT.ZT=0
+         INNER JOIN T_SYS_USERROOT TUSERROOT ON TROOT.ID =TUSERROOT.RID
+         <if test="uid!=null and uid !=''">
+             AND TUSERROOT.UID=#{uid}
+         </if>
+         LEFT JOIN T_SYS_ROOTACTION RACTION ON RACTION.RID =TROOT.ID AND RACTION.ZT= 0
+         LEFT JOIN T_SYS_URACTION URACTION ON RACTION.ID =URACTION.AID
+         <if test="uid!=null and uid !=''">
+             AND URACTION.UID=#{uid}
+         </if>
+         ORDER BY OROOT.SORT ASC ,TROOT.SORT ASC ,RACTION.SORT ASC-->
+        SELECT
+        GROOT.ID AS ROLEID,
+        GROOT.NAME AS ROLENAME ,GROOT.CODE AS ROLECODE ,
+        GROOT.CREATE_TABLE AS CREATETABLE ,GROOT.TABLE_NAME AS TABLENAME,GROOT.CHANGE_SHARE AS CHANGESHARE,
+        <include refid="User_Login_Menu_Base_Column_List"/>,TROOT.*,RACTION.*
+        ,AUROOT1.ID AS RESOUCECHECK,AUROOT2.ID AS
+        ROOTCHECK,AUBU1.ID AS BUTTONCHECK
+        FROM T_SYS_GROOT GROOT
+        INNER JOIN T_SYS_ROOT OROOT ON GROOT.ID =OROOT.GROUPID AND OROOT.ZT=0
+        INNER JOIN T_SYS_USERROOT OUSERROOT ON OROOT.ID =OUSERROOT.RID AND OUSERROOT.UID=#{uid} AND OROOT.PID=0
+        LEFT JOIN T_SYS_USERROOT AUROOT1 ON AUROOT1.RID=OUSERROOT.RID AND AUROOT1.UID=#{authUid}
+        LEFT JOIN (
+        SELECT
+        <include refid="User_Login_Two_Menu__Column_List"/>
+        FROM
+        T_SYS_ROOT TROOT
+        INNER JOIN T_SYS_USERROOT TUSERROOT ON TROOT.ID =TUSERROOT.RID AND TUSERROOT.UID=#{uid} AND TROOT.ZT=0 AND
+        TROOT.PID>0
+        ) AS TROOT ON OROOT.ID=TROOT.ROOTPID
+        LEFT JOIN T_SYS_USERROOT AUROOT2 ON AUROOT2.RID=TROOT.ROOTID AND AUROOT2.UID=#{authUid}
+        LEFT JOIN (
+        SELECT
+        <include refid="User_Login_Button__Column_List"/>
+        FROM T_SYS_ROOTACTION RACTION
+        INNER JOIN T_SYS_URACTION URACTION ON RACTION.ID =URACTION.AID AND URACTION.UID=#{uid} AND RACTION.ZT= 0
+
+        ) AS RACTION ON RACTION.BUTTONRID =TROOT.ROOTID
+        LEFT JOIN T_SYS_URACTION AUBU1 ON AUBU1.AID=RACTION.BUTTONID AND AUBU1.UID=#{authUid}
+    </select>
+
+
+    <select id="selectAdminAuthMenuList" resultMap="RoleBaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Menu_Button_Base_Column_List"/>,OUSERROOT.ID AS RESOUCECHECK,TUSERROOT.ID AS
+        ROOTCHECK,URACTION.ID AS BUTTONCHECK
+        FROM
+        T_SYS_GROOT GROOT
+        INNER JOIN T_SYS_ROOT OROOT ON GROOT.ID =OROOT.GROUPID AND OROOT.ZT=0
+        LEFT JOIN T_SYS_USERROOT OUSERROOT ON OROOT.ID =OUSERROOT.RID
+        <if test="uid!=null and uid !=''">
+            AND OUSERROOT.UID=#{uid}
+        </if>
+        LEFT JOIN T_SYS_ROOT TROOT ON OROOT.ID=TROOT.PID AND TROOT.ZT=0
+        LEFT JOIN T_SYS_USERROOT TUSERROOT ON TROOT.ID =TUSERROOT.RID
+        <if test="uid!=null and uid !=''">
+            AND TUSERROOT.UID=#{uid}
+        </if>
+        LEFT JOIN T_SYS_ROOTACTION RACTION ON RACTION.RID =TROOT.ID AND RACTION.ZT= 0
+        LEFT JOIN T_SYS_URACTION URACTION ON RACTION.ID =URACTION.AID
+        <if test="uid!=null and uid !=''">
+            AND URACTION.UID=#{uid}
+        </if>
+        ORDER BY GROOT.ID
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="RootBaseResultMap" parameterType="String">
+        SELECT
+        <include refid="Root_Base_Column_List"/>
+        FROM T_SYS_ROOT ROOT
+        INNER JOIN T_SYS_USERROOT UROOT
+
+        WHERE ROOT.ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteUserRootByCodeAndUid" parameterType="map">
+        DELETE
+        FROM T_SYS_USERROOT
+        WHERE UID=#{uid} AND RCODE=#{rcode};
+
+  </delete>
+
+    <delete id="deleteButtonByCodeAndUid" parameterType="map">
+        DELETE FROM T_SYS_URACTION WHERE UID=#{uid} AND RCODE=#{rcode};
+
+    </delete>
+
+    <insert id="insertRoot" parameterType="cn.tc.ulife.platform.server.authorization.model.SysRoot">
+    insert into t_sys_root (ID, GROUPID, NAME, 
+      CODE, LEVEL, ISLEAF, URL, 
+      PID, SORT, CID, CTIME, 
+      MTIME, ZT, TYPE, ICON, 
+      ISSUED)
+    values (#{id,jdbcType=BIGINT}, #{groupid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{level,jdbcType=CHAR}, #{isleaf,jdbcType=CHAR}, #{url,jdbcType=VARCHAR}, 
+      #{pid,jdbcType=BIGINT}, #{sort,jdbcType=INTEGER}, #{cid,jdbcType=BIGINT}, #{ctime,jdbcType=TIMESTAMP}, 
+      #{mtime,jdbcType=TIMESTAMP}, #{zt,jdbcType=CHAR}, #{type,jdbcType=CHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{issued,jdbcType=CHAR})
+  </insert>
+
+
+    <select id="selectUserLoginAuthMenuList" resultMap="ResouceBaseResultMap" parameterType="map">
+        SELECT
+        <include refid="User_Login_Menu_Base_Column_List"/>,TROOT.*,RACTION.*
+        FROM
+        T_SYS_ROOT OROOT
+        INNER JOIN T_SYS_USERROOT OUSERROOT ON OROOT.ID =OUSERROOT.RID AND OUSERROOT.UID=#{uid} AND OROOT.PID=0
+        LEFT JOIN (
+        SELECT
+        <include refid="User_Login_Two_Menu__Column_List"/>
+        FROM
+        T_SYS_ROOT TROOT
+        INNER JOIN T_SYS_USERROOT TUSERROOT ON TROOT.ID =TUSERROOT.RID AND TUSERROOT.UID=#{uid} AND TROOT.ZT=0 AND
+        TROOT.PID>0
+        ) AS TROOT ON OROOT.ID=TROOT.ROOTPID
+        LEFT JOIN (
+        SELECT
+        <include refid="User_Login_Button__Column_List"/>
+        FROM T_SYS_ROOTACTION RACTION
+        INNER JOIN T_SYS_URACTION URACTION ON RACTION.ID =URACTION.AID AND URACTION.UID=#{uid} AND RACTION.ZT= 0
+
+        ) AS RACTION ON RACTION.BUTTONRID =TROOT.ROOTID
+        <!--   ORDER BY OROOT.SORT ASC ,ROOTSORT ASC ,BUTTONSORT ASC-->
+    </select>
+
+
+    <select id="queryResouceRootByCode" parameterType="String"
+            resultType="cn.tc.ulife.platform.server.authorization.model.GroupRootRole">
+         SELECT GR.NAME AS ROLENAME,GR.CODE AS ROLECODE, GR.CREATE_TABLE AS CREATETABLE ,GR.TABLE_NAME AS TABLENAME ,
+         GR.CHANGE_SHARE AS CHANGESHARE
+         FROM     T_SYS_GROOT GR
+         WHERE GR.CODE=#{code}
+    </select>
+
+    <select id="queryResouceRootById" parameterType="String"
+            resultType="cn.tc.ulife.platform.server.authorization.model.GroupRootRole">
+        SELECT GR.NAME AS ROLENAME,GR.CODE AS ROLECODE, GR.CREATE_TABLE AS CREATETABLE ,GR.TABLE_NAME AS TABLENAME ,
+        GR.CHANGE_SHARE AS CHANGESHARE
+        FROM     T_SYS_GROOT GR
+        WHERE GR.ID=#{id}
+    </select>
+
+    <select id="selectEntityModelByCodeAndUid" parameterType="map"
+            resultMap="EntityResultMap">
+      SELECT  TN.ID,
+      TN.NAME ,TN.ADDRESS , TN.ID,GROUP_CONCAT(UOCOM.COMID) AS COMIDS
+      FROM ${tableName} AS TN
+      INNER  JOIN T_SYS_UOCOM UOCOM ON TN.ID= UOCOM.OID AND  UOCOM.RCODE =#{code}
+      INNER JOIN T_SYS_USERENTITY UE ON UE.UID=#{uid} AND UE.OID=TN.ID AND  UE.RCODE =#{code}
+     GROUP BY TN.ID
+    </select>
+
+    <select id="selectNaturalPersonComm" parameterType="map"
+            resultMap="EntityResultMap">
+        SELECT  TN.ID,TN.ACCOUNT AS NAME ,TN.ADDRESS,GROUP_CONCAT(UOCOM.COMID) AS COMIDS
+        FROM T_U_BASEUSER AS TN
+        INNER  JOIN T_SYS_UOCOM UOCOM ON TN.ID= UOCOM.OID AND  UOCOM.CODE =#{code}
+        GROUP BY TN.ID
+    </select>
+
+
+    <select id="selectGroupRoleByComm" parameterType="map" resultType="String">
+        SELECT COMM.NAME
+        FROM
+        T_SYS_GROOT GROOT
+        INNER JOIN T_SYS_UOCOM UOCOM ON GROOT.CODE=UOCOM.RCODE
+        INNER JOIN T_COMMUNITY COMM ON UOCOM.COMID=COMM.CID
+        WHERE GROOT.CODE=#{code} AND UOCOM.COMID IN
+        <foreach collection="comids" item="comids" index="index"
+                 open="(" close=")" separator=",">
+            #{comids}
+        </foreach>
+    </select>
+
+    <select id="queryEntityResId" parameterType="map" resultType="String">
+        SELECT RESPONSIBLEID
+        FROM ${tableName}
+    </select>
+
+
+</mapper>

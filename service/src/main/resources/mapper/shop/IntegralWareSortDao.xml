@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.IntegralWareSortDao">
+	
+	<!--新增积分商品分类-->
+	<insert id="insert" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage">
+		INSERT INTO T_SYS_URFLBQ (URID,RID,RCODE,TYPE,CTIME,MTIME,CID,NAME,SORT,ZT)VALUES
+        (
+			#{rid,jdbcType=INTEGER},
+			#{urid},
+			#{rid},
+			0,
+			now(),
+			now(),
+			#{cid,jdbcType=INTEGER},
+			#{name,jdbcType=VARCHAR},
+			#{sort,jdbcType=INTEGER},
+			#{zt,jdbcType=VARCHAR}
+        )
+	</insert>
+    <!--删除积分商品分类-->
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        DELETE FROM T_SYS_URFLBQ WHERE ID = #{id}
+    </delete>
+	<!--修改积分商品分类-->
+	<update id="update" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage">
+		UPDATE T_SYS_URFLBQ SET 
+			<if test="name!=null and name !=''">
+			 NAME=#{name},
+			</if>
+			<if test="sort !=null and sort !=''">
+			 SORT=#{sort},
+			</if>
+			<if test="zt !=null and zt !=''">
+			 ZT=#{zt},
+			</if>
+			MTIME=NOW()
+		 WHERE ID=#{id}
+	</update>
+    <!--根据Id获取自定义服务分类数据-->
+    <select id="getDataById" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage" resultType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage">
+        SELECT T.ID,T.NAME,T.SORT,T.ZT,T.CTIME,T.MTIME,T.LOGO PSY,T.PID FROM T_SYS_URFLBQ  T
+        WHERE T.ID=#{id}
+        ORDER BY T.CTIME
+    </select>
+	<!--获取积分商品分类数据-->
+	<select id="getData" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage" resultType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage">
+	  SELECT T.ID,T.NAME,T.SORT,T.ZT,T.CTIME,T.MTIME,T.LOGO PSY,T.PID FROM T_SYS_URFLBQ  T
+	  WHERE 1=1
+	  <if test="cid !=null and cid != ''">
+		and  T.CID=#{cid}
+	  </if>
+	  <if test="id !=null and id != ''">
+		and  T.ID=#{id}
+	  </if>
+	  <if test="urid !=null and urid != ''">
+		and  T.URID=#{urid}
+	  </if>
+	  ORDER BY T.CTIME
+	</select>
+
+	<!--根据PId获取自定义服务分类数据-->
+	<select id="getDataList" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage" resultType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage">
+	  SELECT T.ID,T.NAME,T.SORT,T.ZT,T.CTIME,T.MTIME,T.LOGO,T.PID FROM T_SYS_URFLBQ  T
+	  WHERE T.CID=#{cid}
+	  ORDER BY T.CTIME
+	</select>
+	<!--根据创建人Id获取自定义服务分类数据-->
+	<select id="getDataCount" parameterType="cn.tc.ulife.platform.server.shop.page.IntegralWareSortPage" resultType="String">
+	  SELECT count(1) FROM T_SYS_URFLBQ  T
+	  WHERE T.CID=#{cid}
+	  ORDER BY T.CTIME
+	</select>
+
+    <select id="getWareType" parameterType="map" resultType="String">
+        SELECT NAME FROM T_SYS_URFLBQ WHERE ID = #{flid}
+    </select>
+    <select id="getWareStore" parameterType="map" resultType="String">
+        SELECT NAME FROM T_SYS_DLS WHERE ID = #{sid}
+    </select>
+		
+</mapper>

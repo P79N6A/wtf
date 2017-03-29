@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.comm.dao.CommDao">
+	<!--根据地区id和小区名称获取小区列表-->
+	<select id="getCommList" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" resultType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		SELECT co.CID,co.ID,co.`Name`,co.Address,co.StdAddress,co.Tel,co.Remark,co.AreaID,
+	    co.Lat,co.Lng,co.LastModifyTime,co.`Enable`,co.Deleted,co.ZT,co.Creator,co.Summary,co.JC,co.IsTest,
+	    co.CTIME,co.SZMJX,co.ISDEF MRID,co.Logo url,co.CO_EqSerial,CO.ZFFS
+	    FROM `t_community` co		
+		WHERE 1=1
+    <if test="areaid != null and areaid != ''">
+		and co.AreaID=#{areaid}
+    </if>
+    <if test="name != null and '' != name">
+			and co.`Name` like '%${name}%'
+    </if>
+    <if test="deleted != null and '' != deleted">
+			and co.`Deleted` =#{deleted}
+    </if>	
+	    ORDER BY co.SZMJX,co.Deleted 
+		LIMIT #{start},#{limit} 
+	</select>	
+	
+   <select id="getCommListTotalCount" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" resultType="String">
+    SELECT count(co.CID)  totalCount
+    FROM `t_community` co	
+    where 1=1
+	<if test="areaid != null and areaid != ''">
+		and co.AreaID=#{areaid}
+    </if>
+	 <if test="name != null and '' != name">
+			and co.`Name` like '%${name}%'
+    </if>
+    <if test="deleted != null and '' != deleted">
+			and co.`Deleted` =#{deleted}
+    </if>	 
+   </select>
+   
+   <!--根据当前用户获取其所属小区-->
+	<select id="getUserCommList" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" resultType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		SELECT co.CID,co.ID,co.`Name`,co.Address,co.StdAddress,co.Tel,co.Remark,co.AreaID,
+	    co.Lat,co.Lng,co.LastModifyTime,co.`Enable`,co.Deleted,co.ZT,co.Creator,co.Summary,co.JC,co.IsTest,
+	    co.CTIME,co.SZMJX,co.ISDEF MRID,co.Logo url,co.CO_EqSerial,CO.ZFFS FROM T_SYS_UOCOM O 
+		INNER JOIN `t_community` co	ON O.COMID=co.CID
+		WHERE O.OID=#{oId} AND CO.Deleted='0'
+	    <if test="name != null and '' != name">
+				and co.`Name` like '%${name}%'
+	    </if>
+	    ORDER BY co.SZMJX
+		LIMIT #{start},#{limit} 
+	</select>	
+	
+   <select id="getUserCommListTotalCount" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" resultType="String">
+    SELECT COUNT(1) FROM T_SYS_UOCOM O 
+		INNER JOIN `t_community` co	ON O.COMID=co.CID
+		WHERE O.OID=#{oId} AND CO.Deleted='0'
+	    <if test="name != null and '' != name">
+				and co.`Name` like '%${name}%'
+	    </if>
+   </select>
+   
+   <!--查看社区详情-->
+	<select id="getCommInfo" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" resultType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		SELECT co.CID,co.ID,co.`Name`,co.Address,co.StdAddress,co.Tel,co.Remark,co.AreaID,
+	    co.Lat,co.Lng,co.LastModifyTime,co.`Enable`,co.Deleted,co.ZT,co.Creator,co.Summary,co.JC,co.IsTest,
+	    co.CTIME,co.SZMJX,co.ISDEF MRID,co.Logo url,co.CO_EqSerial,CO.ZFFS
+	    FROM `t_community` co	WHERE cid=#{cid}
+    
+	</select>	
+   
+     <!-- 新增小区，保存小区信息 -->
+	<insert id="addComm" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean" >
+		INSERT INTO  t_community(
+		<if test="name!=null and name!= '' ">
+			Name,
+        </if>
+        <if test="address!=null and address!= '' ">
+			Address,
+        </if>
+        <if test="stdAddress!=null and stdAddress!= '' ">
+			StdAddress,
+        </if>
+        <if test="remark!=null and remark!= '' ">
+			Remark,
+        </if>
+        <if test="areaid!=null and areaid!= '' ">
+			areaID,
+        </if>
+        <if test="lat!=null and lat!= '' ">
+			Lat,
+        </if>
+        <if test="lng!=null and lng!= '' ">
+			Lng,
+        </if>    
+        <if test="enable!=null and enable!= '' ">
+			Enable,
+        </if>
+        <if test="zt!=null and zt!= '' ">
+			ZT,
+        </if>
+        <if test="creator!=null and creator!= '' ">
+			Creator,
+        </if>
+        <if test="summary!=null and summary!= '' ">
+			Summary,
+        </if>
+        <if test="jc!=null and jc!= '' ">
+			JC,
+        </if>
+        <if test="isTest!=null and isTest!= '' ">
+			IsTest,
+        </if>
+        <if test="szmjx!=null and szmjx!= '' ">
+			SZMJX,
+        </if>
+        <if test="tel!=null and tel!= '' ">
+			Tel,
+        </if>
+        <if test="zffs !=null and zffs != '' ">
+			ZFFS,
+        </if>
+        <if test="co_eqserial !=null and co_eqserial != '' ">
+			CO_EqSerial,
+        </if>
+        <if test="accountsid !=null and accountsid != '' ">
+			AccountSid,
+        </if>
+        CTIME,Deleted
+		)
+		VALUES(
+        <if test="name!=null and name!= '' ">
+			#{name,jdbcType=VARCHAR},
+        </if>
+        <if test="address!=null and address!= '' ">
+			#{address,jdbcType=VARCHAR},
+        </if>
+        <if test="stdAddress!=null and stdAddress!= '' ">
+			#{stdAddress,jdbcType=VARCHAR},
+        </if>
+        <if test="remark!=null and remark!= '' ">
+			#{remark,jdbcType=VARCHAR},
+        </if>
+         <if test="areaid!=null and areaid!= '' ">
+			#{areaid,jdbcType=BIGINT},
+        </if>
+        <if test="lat!=null and lat!= '' ">
+			#{lat},
+        </if>
+        <if test="lng!=null and lng!= '' ">
+			#{lng},
+        </if>    
+        <if test="enable!=null and enable!= '' ">
+			#{enable,jdbcType=VARCHAR},
+        </if>
+        <if test="zt!=null and zt!= '' ">
+			#{zt,jdbcType=VARCHAR},
+        </if>
+        <if test="creator!=null and creator!= '' ">
+			#{creator,jdbcType=BIGINT},
+        </if>
+        <if test="summary!=null and summary!= '' ">
+			#{summary,jdbcType=VARCHAR},
+        </if>
+        <if test="jc!=null and jc!= '' ">
+			#{jc,jdbcType=VARCHAR},
+        </if>
+        <if test="isTest!=null and isTest!= '' ">
+			#{isTest,jdbcType=VARCHAR},
+        </if>
+        <if test="szmjx!=null and szmjx!= '' ">
+			#{szmjx,jdbcType=VARCHAR},
+        </if>
+        <if test="tel!=null and tel!= '' ">
+			#{tel,jdbcType=VARCHAR},
+        </if>
+        <if test="zffs !=null and zffs != '' ">
+			#{zffs,jdbcType=VARCHAR},
+        </if>
+        <if test="co_eqserial !=null and co_eqserial != '' ">
+			#{co_eqserial,jdbcType=VARCHAR},
+        </if>
+         <if test="accountsid !=null and accountsid != '' ">
+			#{accountsid,jdbcType=VARCHAR},
+        </if>
+         now(),#{deleted,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 修改小区信息 -->
+	<update id="editComm" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		update t_community 
+		set 
+			<if test="name!=null and name!= '' ">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="address!=null and address!= '' ">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="stdAddress!=null and stdAddress!= '' ">
+				StdAddress = #{stdAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="tel!=null and tel!= '' ">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="remark!=null and remark!= '' ">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="lat!=null and lat!= '' ">
+				Lat = #{lat},
+			</if>
+			<if test="lng!=null and lng!= '' ">
+				Lng = #{lng},
+			</if>
+			<if test="enable!=null and enable!= '' ">
+				Enable = #{enable},
+			</if>
+			<if test="zt!=null and zt!= '' ">
+				ZT = #{zt,jdbcType=VARCHAR},
+			</if>
+			<if test="creator!=null and creator!= '' ">
+				Creator = #{creator,jdbcType=BIGINT},
+			</if>
+			<if test="summary!=null and summary!= '' ">
+				Summary = #{summary,jdbcType=VARCHAR},
+			</if>
+			<if test="jc!=null and jc!= '' ">
+				JC = #{jc,jdbcType=VARCHAR},
+			</if>
+			<if test="isTest!=null and isTest!= '' ">
+				IsTest = #{isTest,jdbcType=VARCHAR},
+			</if>
+			<if test="szmjx!=null and szmjx!= '' ">
+				SZMJX = #{szmjx,jdbcType=VARCHAR},
+			</if>
+			<if test="zffs !=null and zffs != '' ">
+				ZFFS=#{zffs,jdbcType=VARCHAR},
+	        </if>
+	        <if test="deleted !=null and deleted != '' ">
+				Deleted=#{deleted,jdbcType=VARCHAR},
+	        </if>
+	        <if test="co_eqserial !=null and co_eqserial != '' ">
+				CO_EqSerial=#{co_eqserial,jdbcType=VARCHAR},
+	        </if>
+	         <if test="accountsid !=null and accountsid != '' ">
+				AccountSid=#{accountsid,jdbcType=VARCHAR},
+	        </if>
+			LastModifyTime=now()			
+		where CID = #{cid,jdbcType=BIGINT}
+	</update>
+	
+	<!--启用停用小区 -->
+	<update id="eidtstartOrStopComm" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		update t_community  set Deleted =#{deleted},LastModifyTime=now() where CID IN (${cid})
+	</update>
+	
+	<!--设置小区支付方式 -->
+	<update id="addPayment" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		update t_community  set ZFFS =#{zffs},LastModifyTime=now() where CID IN( ${cid} )
+	</update>
+	
+	<!--设置小区门口机系列 -->
+	<update id="saveDoorMachine" parameterType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+		update t_community  set CO_EqSerial =#{co_eqserial},LastModifyTime=now() where CID IN( ${cid} )
+	</update>
+	<!--校验唯一-->
+	<select id="checkUnique" parameterType="map" resultType="int">
+		${sql}
+	</select>
+	
+	<!--根据社区id获取社区结构-->
+	<select id="getComStructureList" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean" resultType="cn.tc.ulife.platform.server.comm.model.ComStructureBean">
+	    SELECT RBC.RID,RBC.ID,RBC.CommunityID,RBC.`Name`,RBC.ParentID,RBC.FullName,RBC.IsLast,RBC.LastModifyTime,RBC.Creator,RBC.ZT,
+	    if(isnull(PRBC.FullName),'顶级规则',PRBC.FullName)  ParentName
+	    FROM `roombycommunity` RBC LEFT JOIN roombycommunity PRBC ON RBC.ParentID=PRBC.RID    
+   		WHERE RBC.CommunityID=#{communityId}   
+	    <if test="fullName != null and '' != fullName">
+				and RBC.`Name` like '%${fullName}%'
+	    </if>
+	    <if test="isLast != null and '' != isLast">
+				and RBC.IsLast = #{isLast}
+	    </if> 
+	    ORDER BY RBC.RID DESC 
+	    LIMIT #{start},#{limit}   
+    </select>
+    <!--获取结构列表总记录-->
+	<select id="getComStructureTotalCount" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean" resultType="String">
+	    SELECT count(1) FROM `roombycommunity` RBC
+   		WHERE RBC.CommunityID=#{communityId}   
+	    <if test="fullName != null and '' != fullName">
+				and RBC.`Name` like '%${fullName}%'
+	    </if>
+	    <if test="isLast != null and '' != isLast">
+				and RBC.IsLast = #{isLast}
+	    </if> 
+    </select> 
+    
+    <!-- 新增社区结构信息-->
+	<insert id="addComStru" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean" >
+		INSERT INTO  roombycommunity(
+			CommunityID,Name,ParentID,
+	        <if test="fullName !=null and fullName != '' ">
+				FullName,
+	        </if>
+	        <if test="isLast !=null and isLast != '' ">
+				IsLast,
+	        </if>
+	        <if test="creator !=null and creator != '' ">
+				Creator,
+	        </if>
+	        LastModifyTime,ZT
+		)
+		VALUES(
+			#{communityId},#{name},#{parentId},
+			<if test="fullName !=null and fullName != '' ">
+				#{fullName},
+	        </if>
+	        <if test="isLast !=null and isLast != '' ">
+				#{isLast},
+	        </if>
+		 	<if test="creator !=null and creator != '' ">
+				#{creator},
+	        </if>
+         now(),0
+		)
+	</insert>
+	
+	<!-- 修改社区结构信息 -->
+	<update id="editComStru" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean">
+		update roombycommunity 
+		set 
+			<if test="name!=null and name!= '' ">
+				Name = #{name},
+			</if>
+			<if test="isLast !=null and isLast != '' ">
+				IsLast= #{isLast},
+	        </if>
+	        <if test="fullName !=null and fullName != '' ">
+				FullName= #{fullName},
+	        </if>
+			LastModifyTime=now()			
+		where RID = #{rid}
+	</update>
+	
+	<!-- 根据结构ID删除社区结构-->
+	<delete id="delRoomById" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean">
+		DELETE FROM t_sys_room  WHERE CommunityStructID IN (${rid})
+	</delete>
+	
+	<!-- 删除社区结构-->
+	<delete id="delComStru" parameterType="cn.tc.ulife.platform.server.comm.model.ComStructureBean">
+		DELETE FROM ROOMBYCOMMUNITY  WHERE RID IN (${rid})
+	</delete>
+	
+	 <!--根据社区id获取房间结构-->
+	<select id="getRoomList" parameterType="cn.tc.ulife.platform.server.comm.model.RoomBean" resultType="cn.tc.ulife.platform.server.comm.model.RoomBean">
+	     SELECT R.RID,R.ID,R.CommunityID,concat(RBC.FullName,R.`Name`) FNAME,  R.`Name`,RBC.FullName  CommunityStructName,
+	     R.CommunityStructID,R.FJDZ,R.ISRZ,R.JZZT,R.LastModifyTime,R.Creator,R.ZT
+	     FROM `t_sys_room` R INNER JOIN roombycommunity RBC ON R.CommunityStructID=RBC.RID           
+	     WHERE R.CommunityID=#{communityId}     
+	     <if test="communityStructName != null and '' != communityStructName">
+	      		and CONCAT_WS('^',RBC.FullName,R.Name)  like '%${communityStructName}%'
+	      </if> 
+	      ORDER BY CTIME DESC ,LastModifyTime DESC ,FNAME DESC
+	      LIMIT #{start},#{limit} 
+     </select>
+     
+     <!--根据社区id获取房间结构 总记录-->
+	<select id="getRoomTotalCount" parameterType="cn.tc.ulife.platform.server.comm.model.RoomBean" resultType="cn.tc.ulife.platform.server.comm.model.RoomBean">
+	     SELECT count(1) FROM `t_sys_room` R 
+	     INNER JOIN roombycommunity RBC ON R.CommunityStructID=RBC.RID
+	     WHERE R.CommunityID=#{communityId}     
+	      <if test="communityStructName != null and '' != communityStructName">
+	      		and CONCAT_WS('^',RBC.FullName,R.Name)  like '%${communityStructName}%'
+	      </if> 
+     </select>
+     
+    <!-- 新增社区房间信息-->
+	<insert id="addRoom" parameterType="cn.tc.ulife.platform.server.comm.model.RoomBean" >
+		INSERT INTO  t_sys_room (
+			CommunityID,Name,CommunityStructID,
+	        <if test="fjdz !=null and fjdz != '' ">
+				FJDZ,
+	        </if>
+	        <if test="isrz !=null and isrz != '' ">
+				ISRZ,
+	        </if>
+	        <if test="jzzt !=null and jzzt != '' ">
+				JZZT,
+	        </if>
+	        <if test="zhsl !=null and zhsl != '' ">
+				ZHSL,
+	        </if>
+	        <if test="creator !=null and creator != '' ">
+				Creator,
+	        </if>
+	        CTIME,ZT
+		)
+		VALUES(
+			#{communityId},#{name},#{communityStructID},
+			<if test="fjdz !=null and fjdz != '' ">
+				#{fjdz},
+	        </if>
+	        <if test="isrz !=null and isrz != '' ">
+				#{isrz},
+	        </if>
+	        <if test="jzzt !=null and jzzt != '' ">
+				#{jzzt},
+	        </if>
+	        <if test="zhsl !=null and zhsl != '' ">
+				#{zhsl},
+	        </if>
+	        <if test="creator !=null and creator != '' ">
+				#{creator},
+	        </if>
+         now(),0
+		)
+	</insert>
+	
+	<!-- 修改社区房间信息 -->
+	<update id="editRoom" parameterType="cn.tc.ulife.platform.server.comm.model.RoomBean">
+		update t_sys_room 
+		set 
+			<if test="name!=null and name!= '' ">
+				Name = #{name},
+			</if>
+			<if test="fjdz !=null and fjdz != '' ">
+				FJDZ = #{fjdz},
+	        </if>
+	        <if test="isrz !=null and isrz != '' ">
+				ISRZ = #{isrz},
+	        </if>
+	        <if test="jzzt !=null and jzzt != '' ">
+				JZZT = #{jzzt},
+	        </if>
+	        <if test="zhsl !=null and zhsl != '' ">
+				ZHSL = #{zhsl},
+	        </if>
+			LastModifyTime=now()			
+		where RID = #{rid}
+	</update>
+	
+	<!-- 根据结构ID删除社区结构-->
+	<delete id="delRoom" parameterType="cn.tc.ulife.platform.server.comm.model.RoomBean">
+		DELETE FROM t_sys_room  WHERE RID IN (${rid})
+	</delete>
+	
+</mapper>

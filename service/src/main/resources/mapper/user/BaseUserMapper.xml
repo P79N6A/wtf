@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.user.dao.BaseUserMapper">
+
+	<select id="queryUserByAccPwd" parameterType="map"
+		resultType="cn.tc.ulife.platform.server.user.model.UserFront">
+		SELECT BU.* FROM T_U_BASEUSER BU 
+		WHERE BU.ACCOUNT = #{account} AND BU.PASSWORD = #{password} AND BU.ZT=0
+	</select>
+
+	<select id="queryUserList" parameterType="map"
+		resultType="cn.tc.ulife.platform.server.user.model.UserFront">
+		SELECT BU.* FROM T_U_BASEUSER BU
+		INNER JOIN T_SYS_USERROLE UR ON UR.UID
+		= BU.ID
+		WHERE UR.RCODE!='ADMIN'
+		<if test="comid != null and comid != ''">
+			AND BU.COMID = #{comid}
+		</if>
+		<if test="roomid != null and roomid != ''">
+			AND BU.ROOMID = #{roomid}
+		</if>
+		<if test="text != null and text != ''">
+			AND CONCAT_WS('^',BU.MOBILE,BU.NAME,BU.NickName) LIKE
+			'%${text}%'
+		</if>
+		<if test="role != null and role != ''">
+			AND UR.RCODE = #{role}
+		</if>
+		<if test="zt != null and zt != ''">
+			AND BU.ZT = #{zt}
+		</if>
+		GROUP BY BU.ID
+		ORDER BY BU.REGTIME DESC
+		LIMIT #{ofset}, #{psize}
+	</select>
+
+	<!--<select id="queryXqggs" parameterType="map" -->
+	<!--resultType="cn.tc.ulife.platform.server.property.model.WyXqggEntity"> -->
+	<!--select * from t_wy_xqgg where -->
+	<!--xqid = #{xqid} -->
+	<!--order -->
+	<!--by gtime desc limit #{ofset},#{psize} -->
+	<!--</select> -->
+
+	<select id="queryUserAll" parameterType="map"
+		resultType="cn.tc.ulife.platform.server.user.model.BaseUserEntity">
+		SELECT BU.* FROM T_U_BASEUSER bu
+        <if test="rcode == 'DLS'">
+        INNER JOIN T_SYS_USERENTITY uen ON uen.UID = bu.ID
+        INNER JOIN T_SYS_DLS dls ON dls.ID = uen.OID
+        </if>
+		ORDER BY bu.REGTIME DESC
+		LIMIT #{ofset}, #{psize}
+	</select>
+
+	<select id="countUser" parameterType="map" resultType="String">
+		SELECT
+		count(1) FROM T_U_BASEUSER BU
+	</select>
+
+	<insert id="addAdminUser" parameterType="cn.tc.ulife.platform.server.user.model.BaseUserEntity">
+		INSERT INTO T_U_BASEUSER
+		(account, MOBILE, name, nickname, DTYPE, Creator,
+		IsNewUser, ZT,
+		RegMethod, REGTIME, LastModifyTime)
+		VALUE (#{account}, #{mobile},
+		#{name}, #{nickname}, #{dtype}, #{creator},
+		#{isnewuser}, #{zt},
+		#{regmethod}, now(), NULL)
+	</insert>
+	<update id="updAdminUser" parameterType="cn.tc.ulife.platform.server.user.model.BaseUserEntity">
+		UPDATE T_U_BASEUSER
+        <set>
+		<if test="comid != null">
+            COMID = #{comid},
+		</if>
+		<if test="roomid != null">
+            ROOMID = #{roomid},
+		</if>
+		<if test="name != null">
+			NAME = #{name},
+		</if>
+		<if test="nickname != null">
+            NICKNAME = #{nickname},
+		</if>
+		<if test="identitytype != null">
+            IDENTITYTYPE = #{identitytype},
+		</if>
+		<if test="identityno != null">
+            IDENTITYNO = #{identityno},
+		</if>
+		<if test="birthday != null">
+            BIRTHDAY = #{birthday},
+		</if>
+		<if test="gender != null">
+            GENDER = #{gender},
+		</if>
+        <if test="zt != null and zt != ''">
+			ZT = #{zt},
+		</if>
+        <if test="password != null and password != ''">
+            PASSWORD = #{password},
+		</if>
+        </set>
+		WHERE ID = #{id}
+	</update>
+
+	<!-- 用户注册或者后台开户 基本资料 -->
+	<insert id="insertUser" parameterType="cn.tc.ulife.platform.server.user.model.SysBaseUser">
+		INSERT INTO t_u_baseuser
+		(account,PASSWORD, mobile,
+		tel, nickname,
+		NAME,IdentityType,IdentityNo,BirthDay, Gender, REMARK,
+		COMID,
+		ROOMID,RegMethod, REGTIME,
+		LastModifyTime,ZT,DTYPE,Creator,KFID,IsNewUser,RKE_ISCHILD,RKE_FingerPrint,TalkAccount,TalkPassword)
+		VALUES (#{Account}, #{Password}, #{MOBILE},#{MOBILE},
+		#{NAME},
+		#{NickName},#{IdentityType},#{IdentityNo},#{BirthDay},#{Gender},#{REMARK},#{COMID},#{ROOMID},#{RegMethod},now(),
+		now(),0, #{DTYPE}, #{Creator},#{KFID},
+		#{IsNewUser}, #{RKE_IsChild},
+		#{RKE_FingerPrint}, #{TalkAccount},#{TalkPassword} )
+	</insert>
+
+	<!-- 用户与房间 如果是开户的时候，默认第一个小区就是默认小区 -->
+	<insert id="insertUserHouse"
+		parameterType="cn.tc.ulife.platform.server.user.model.UserHouseBean">
+		INSERT INTO t_sys_urcom (uid, comid, roomid, isdef,
+		ctime, hrid, ISAudited)
+		values(#{UID},#{COMID},#{ROOMID},#{ISDEF},now(),#{HRID},#{IS_Audited})
+	</insert>
+
+    <sql id="User_Column_List">
+        BU.ID, BU.Account, BU.Password, BU.MOBILE, BU.TEL, BU.NickName, BU.NAME, BU.IdentityNo, BU.BirthDay, BU.Gender,
+        BU.ADDRESS, BU.REGTIME, BU.LastModifyTime, BU.HeadImage, BU.EMAIL, BU.QQ, BU.WX, BU.ZT, BU.REMARK, BU.DTYPE,
+        BU.ISNEWUSER
+    </sql>
+    <resultMap id="BaseUserResultMap" type="cn.tc.ulife.platform.server.user.model.BaseUser">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="Account" property="account" jdbcType="VARCHAR"/>
+        <result column="Password" property="password" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="TEL" property="tel" jdbcType="VARCHAR"/>
+        <result column="NickName" property="nickName" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="IdentityNo" property="identityNo" jdbcType="VARCHAR"/>
+        <result column="BirthDay" property="birthday" jdbcType="VARCHAR"/>
+        <result column="Gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="REGTIME" property="regtime" jdbcType="VARCHAR"/>
+        <result column="LastModifyTime" property="lastModifytime" jdbcType="VARCHAR"/>
+        <result column="HeadImage" property="headImage" jdbcType="VARCHAR"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="WX" property="wx" jdbcType="VARCHAR"/>
+        <result column="ZT" property="zt" jdbcType="VARCHAR"/>
+        <result column="REMARK" property="remark" jdbcType="VARCHAR"/>
+        <result column="DTYPE" property="dtype" jdbcType="VARCHAR"/>
+        <result column="RegMethod" property="regMethod" jdbcType="VARCHAR"/>
+        <result column="Creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="COMID" property="comId" jdbcType="VARCHAR"/>
+        <result column="RID" property="rid" jdbcType="VARCHAR"/>
+        <result column="COMMUNITYNAME" property="communityName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="selUserByPk" resultMap="BaseUserResultMap" parameterType="String">
+        SELECT
+        <include refid="User_Column_List"/>
+        FROM t_u_baseuser BU
+        WHERE BU.ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updBaseUserByPk" parameterType="cn.tc.ulife.platform.server.user.model.BaseUser">
+        update t_u_baseuser
+        <set>
+            <if test="password != null and password != ''">
+                Password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null and  password !=''">
+                MOBILE = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null and  tel !=''">
+                TEL = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null and  nickName !=''">
+                NickName = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="identityNo != null and identityNo !='' ">
+                IdentityNo = #{identityno,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null and gender !=''">
+                Gender = #{gender,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null and address !=''">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifytime != null and lastModifytime !=''">
+                LastModifyTime = #{lastModifytime,jdbcType=VARCHAR},
+            </if>
+            <if test="headImage != null and headImage != ''">
+                HeadImage = #{headImage,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email !=''">
+                EMAIL = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="isNewUser != null and isNewUser !=''">
+                isNewUser = #{isNewUser,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            <if test="id !=null">
+                ID = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="account !=null">
+                ACCOUNT = #{account,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
+</mapper>

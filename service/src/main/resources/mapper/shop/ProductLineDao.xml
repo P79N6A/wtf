@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.ProductLineDao">
+
+    <!-- 添加产品线信息 -->
+    <insert id="addProductLine" parameterType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        INSERT into T_SC_PRODUCTLINE (NAME,LOGO,GMFS,XZ,SORT,MS,CTIME) VALUES
+		(
+			#{name},#{logo},#{gmfs},#{xz},#{sort},#{ms},now()
+		)
+    </insert>
+
+    <!-- 删除产品线信息 -->
+    <delete id="delProductLine" parameterType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        UPDATE T_SC_PRODUCTLINE SET ZT = '3' WHERE ID = #{id}
+    </delete>
+
+    <!-- 修改产品线信息 -->
+	<update id="updProductLine" parameterType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        UPDATE T_SC_PRODUCTLINE
+        <set>
+            <if test="name != null">
+                NAME = #{name},
+            </if>
+            <if test="logo != null">
+                LOGO = #{logo},
+            </if>
+            <if test="gmfs != null">
+                GMFS = #{gmfs},
+            </if>
+            <if test="xz != null">
+                XZ = #{xz},
+            </if>
+            <if test="ms != null">
+                MS = #{ms},
+            </if>
+            <if test="xh != null">
+                XH = #{xh},
+            </if>
+            <if test="zt != null">
+                ZT = #{zt},
+            </if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 查询产品线信息 -->
+    <select id="queryProductLineEntity" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        SELECT * FROM T_SC_PRODUCTLINE WHERE ID = #{id}
+    </select>
+
+    <!-- 查询产品线信息列表 -->
+    <select id="queryAll" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        SELECT * FROM T_SC_PRODUCTLINE WHERE 1=1
+        <if test="name != null and name != ''">
+            AND NAME = #{name}
+        </if>
+        ORDER BY CTIME
+        <if test="ofset != null">
+            LIMIT #{ofset}, #{psize}
+        </if>
+    </select>
+
+    <!-- 产品线绑定商品分类 -->
+    <insert id="addPLineSpfl" parameterType="cn.tc.ulife.platform.server.shop.entity.PLineSpflEntity">
+        INSERT INTO t_sc_plinespfl(FLID,PLID,CTIME)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.flid},#{item.plid},now())
+        </foreach>
+    </insert>
+
+    <!-- 删除产品线与商品分类绑定关系 -->
+    <delete id="delPLineSpfl" parameterType="cn.tc.ulife.platform.server.shop.entity.PLineSpflEntity">
+        DELETE FROM t_sc_plinespfl WHERE ID IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <!-- 查询产品线对应商品分类绑定关系 -->
+    <select id="queryPLineSpflList" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.PLineSpflEntity">
+        SELECT * FROM t_sc_plinespfl WHERE PLID = #{plid}
+    </select>
+
+    <select id="getProductLineTotal" parameterType="map" resultType="String">
+        SELECT count(*) FROM T_SC_PRODUCTLINE
+    </select>
+
+    <!-- 代理商的产品线tree -->
+    <select id="getLeadProductLineYxTypeTree" parameterType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity" resultType="cn.tc.ulife.platform.server.shop.entity.ProductLineEntity">
+        SELECT
+        l.id,
+        l.`NAME` name
+        FROM
+        t_sc_productline l
+        INNER JOIN t_sys_plineissued p ON l.ID = p.PID
+        AND p.ZT = 0 AND p.RCODE = 'DLS'
+        <if test="uid!=null and uid!=''"> AND p.UID = #{uid}</if>
+        WHERE
+        l.ZT = 0
+    </select>
+
+    <!-- 产品线绑定用户 -->
+    <insert id="addPLineUser" parameterType="cn.tc.ulife.platform.server.shop.entity.PLineSpflEntity">
+        INSERT INTO T_SYS_PLINEISSUED(PID,UID,ZKL,ZT,RCODE,CID,CTIME,MTIME)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.pid},#{item.uid},#{item.zkl},#{item.zt},#{item.rcode},#{item.cid},now(),NULL)
+        </foreach>
+    </insert>
+</mapper>

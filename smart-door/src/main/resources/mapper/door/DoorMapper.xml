@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.DoorDao">
+
+	<!-- 登录查询 -->
+	<select id="loginRkeEquipment" parameterType="map"
+		resultType="cn.tc.ulife.platform.door.mode.RKE_EquipmentBean">
+		select
+		EQ_AutoID,EQ_CommunityID,EQ_CS_ID,EQ_Name,EQ_Num,EQ_UserName,EQ_Type,EQ_IP,EQ_TalkName,EQ_TalkPwd,EQ_Bell,EQ_MediaDay,EQ_MediaNight,EQ_NightStartHour,EQ_NightStartMinute,EQ_NightEndHour,EQ_NightEndMinute,EQ_IsPlayImage,EQ_IsPlayVideo,EQ_ImageInterval,EQ_CallPriority,EQ_StartTime,EQ_AlarmTimeDelay,EQ_SystemPwd,
+		EQ_SharePwd,EQ_Volume,EQ_ModelNumber,EQ_KernelVersion,EQ_SoftwareVersion,EQ_IsClosed,EQ_IsOnline,EQ_IsEnable,EQ_IsNeedPwd,EQ_CalibrateTime,EQ_PoliceRecordID,EQ_LastOpenTime,EQ_OpenByIdCard,EQ_OpenByBluetooth,EQ_IsDoorStateCheck,EQ_AddTime,EQ_MAC,Creater,AccountSid,EQ_FaceIP,EQ_FacePwd
+		from t_rke_equipment where EQ_UserName = #{EQ_UserName} and
+		EQ_UserPwd
+		= #{EQ_UserPwd}
+	</select>
+	
+	<!-- 登录查询 -->
+	<select id="checkRkeAccount" parameterType="String"
+		resultType="int">
+		select
+		 count(*) 
+		from t_rke_equipment where EQ_UserName = #{EQ_UserName}
+	</select>
+
+
+	<!-- 插入用户房间与门禁权限 -->
+	<insert id="insertUserEquipment"
+		parameterType="cn.tc.ulife.platform.door.mode.RKE_User_EquipmentBean">
+		INSERT INTO t_rke_user_equipment (
+		RH_R_ID,
+		UID,
+		RH_CreateTime,
+		AccountSid,
+		Creator,
+		RH_IsShowMKJ,
+		RH_AppTalkable,
+		RH_PhoneTalkable,
+		RH_IsVideoCall,
+		RH_PowerStartTime,
+		RH_PowerEndTime,
+		RH_AddrAuthCode,
+		RH_FingerPrintCode1,
+		RH_IsAudited
+		)
+		VALUES
+		(#{RH_R_ID},
+		#{UID},
+		now(),
+		#{AccountSid},
+		#{Creator},
+		#{RH_IsShowMKJ},
+		#{RH_AppTalkable},
+		#{RH_PhoneTalkable},
+		#{RH_IsVideoCall},
+		#{RH_PowerStartTime},
+		#{RH_PowerEndTime},
+		#{RH_AddrAuthCode},
+		#{RH_FingerPrintCode1},
+		#{RH_IsAudited})
+	</insert>
+
+
+	<!-- 查询用户房间 的门禁权限 -->
+	<select id="queryUserEquipment"
+		parameterType="cn.tc.ulife.platform.door.mode.RKE_User_EquipmentBean"
+		resultType="cn.tc.ulife.platform.door.mode.RKE_User_EquipmentBean">
+		SELECT
+		RH_ID,
+		RH_R_ID,
+		UID,
+		RH_CreateTime,
+		RH_LastModifyTime,
+		AccountSid,
+		Creator,
+		RH_IsShowMKJ,
+		RH_AppTalkable,
+		RH_PhoneTalkable,
+		RH_IsVideoCall,
+		RH_PowerStartTime,
+		RH_PowerEndTime,
+		RH_AddrAuthCode,
+		RH_FingerPrintCode1,
+		RH_IsAudited
+		FROM
+		t_rke_user_equipment rkeuser where rkeuser.rh_r_id = #{RH_R_ID} and
+		rkeuser.uid = #{UID}
+	</select>
+
+	<!-- 修改用户房间所属的门禁权限 -->
+	<update id="updateUserEquipment"
+		parameterType="cn.tc.ulife.platform.door.mode.RKE_User_EquipmentBean">
+		UPDATE t_rke_user_equipment SET
+		<if test="RH_IsShowMKJ != null">
+			RH_IsShowMKJ = #{RH_IsShowMKJ},
+		</if>
+		<if test="RH_AppTalkable != null">
+			RH_AppTalkable = #{RH_AppTalkable},
+		</if>
+		<if test="RH_PhoneTalkable != null">
+			RH_PhoneTalkable = #{RH_PhoneTalkable},
+		</if>
+		<if test="RH_IsVideoCall != null">
+			RH_IsVideoCall = #{RH_IsVideoCall},
+		</if>
+		<if test="RH_PowerStartTime != null">
+			RH_PowerStartTime = #{RH_PowerStartTime},
+		</if>
+		<if test="RH_PowerEndTime != null">
+			RH_PowerEndTime = #{RH_PowerEndTime},
+		</if>
+		<if test="RH_AddrAuthCode != null">
+			RH_AddrAuthCode = #{RH_AddrAuthCode},
+		</if>
+		<if test="RH_FingerPrintCode1 != null">
+			RH_FingerPrintCode1 = #{RH_FingerPrintCode1},
+		</if>
+		<if test="RH_IsAudited != null">
+			RH_IsAudited = #{RH_IsAudited},
+		</if>
+		RH_LastModifyTime = now() WHERE RH_ID = #{RH_ID}
+	</update>
+
+	<!-- 查询设备列表 -->
+	<select id="queryRKeEquipment" parameterType="cn.tc.ulife.platform.door.mode.RKE_EquipmentBean"
+		resultType="cn.tc.ulife.platform.door.mode.RKE_EquipmentBean">
+		select
+		EQ_AutoID,EQ_CommunityID,EQ_CS_ID,EQ_Name,EQ_Num,EQ_UserName,EQ_Type,EQ_IP,EQ_TalkName,EQ_TalkPwd,EQ_Bell,EQ_MediaDay,EQ_MediaNight,EQ_NightStartHour,EQ_NightStartMinute,EQ_NightEndHour,EQ_NightEndMinute,EQ_IsPlayImage,EQ_IsPlayVideo,EQ_ImageInterval,EQ_CallPriority,EQ_StartTime,EQ_AlarmTimeDelay,EQ_SystemPwd,
+		EQ_SharePwd,EQ_Volume,EQ_ModelNumber,EQ_KernelVersion,EQ_SoftwareVersion,EQ_IsClosed,EQ_IsOnline,EQ_IsEnable,EQ_IsNeedPwd,EQ_CalibrateTime,EQ_PoliceRecordID,EQ_LastOpenTime,EQ_OpenByIdCard,EQ_OpenByBluetooth,EQ_IsDoorStateCheck,EQ_AddTime,EQ_MAC,Creater,AccountSid,EQ_FaceIP,EQ_FacePwd
+		from t_rke_equipment where EQ_CommunityID = #{EQ_CommunityID} and
+		EQ_CS_ID in (#{EQ_CS_ID})
+	</select>
+
+	<insert id="insertEquipment" parameterType="cn.tc.ulife.platform.door.mode.RKE_EquipmentBean">
+		INSERT INTO
+		t_rke_equipment (
+		EQ_CommunityID,
+		EQ_CS_ID, EQ_Name,
+		EQ_Num,
+		EQ_DevCode,
+		EQ_UserName,
+		EQ_UserPwd,
+		EQ_Type,
+		EQ_IP,
+		EQ_TalkName,
+		EQ_TalkPwd,
+		EQ_Bell,
+		EQ_MediaDay,
+		EQ_MediaNight,
+		EQ_NightStartHour,
+		EQ_NightStartMinute,
+		EQ_NightEndHour,
+		EQ_NightEndMinute,
+		EQ_IsPlayImage,
+		EQ_IsPlayVideo,
+		EQ_ImageInterval,
+		EQ_CallPriority,
+		EQ_StartTime,
+		EQ_AlarmTimeDelay,
+		EQ_SystemPwd,
+		EQ_SharePwd,
+		EQ_Volume,
+		EQ_ModelNumber,
+		EQ_KernelVersion,
+		EQ_SoftwareVersion,
+		EQ_IsClosed,
+		EQ_IsOnline,
+		EQ_IsEnable,
+		EQ_IsNeedPwd,
+		EQ_CalibrateTime,
+		EQ_PoliceRecordID,
+		EQ_LastOpenTime,
+		EQ_OpenByIdCard,
+		EQ_OpenByBluetooth,
+		EQ_IsDoorStateCheck,
+		EQ_AddTime,
+		EQ_MAC,
+		Creater,
+		AccountSid,
+		EQ_FaceIP,
+		EQ_FacePwd
+		)
+		VALUES
+		(#{EQ_CommunityID},
+		#{EQ_CS_ID}, #{EQ_Name},
+		#{EQ_Num},
+		#{EQ_DevCode},
+		#{EQ_UserName},
+		#{EQ_UserPwd},
+		#{EQ_Type},
+		#{EQ_IP},
+		#{EQ_TalkName},
+		#{EQ_TalkPwd},
+		#{EQ_Bell},
+		#{EQ_MediaDay},
+		#{EQ_MediaNight},
+		#{EQ_NightStartHour},
+		#{EQ_NightStartMinute},
+		#{EQ_NightEndHour},
+		#{EQ_NightEndMinute},
+		#{EQ_IsPlayImage},
+		#{EQ_IsPlayVideo},
+		#{EQ_ImageInterval},
+		#{EQ_CallPriority},
+		#{EQ_StartTime},
+		#{EQ_AlarmTimeDelay},
+		#{EQ_SystemPwd},
+		#{EQ_SharePwd},
+		#{EQ_Volume},
+		#{EQ_ModelNumber},
+		#{EQ_KernelVersion},
+		#{EQ_SoftwareVersion},
+		#{EQ_IsClosed},
+		0,
+		#{EQ_IsEnable},
+		#{EQ_IsNeedPwd},
+		#{EQ_CalibrateTime},
+		#{EQ_PoliceRecordID},
+		#{EQ_LastOpenTime},
+		#{EQ_OpenByIdCard},
+		#{EQ_OpenByBluetooth},
+		#{EQ_IsDoorStateCheck},
+		now(),
+		#{EQ_MAC},
+		#{Creater},
+		#{AccountSid},
+		#{EQ_FaceIP},
+		#{EQ_FacePwd})
+	</insert>
+</mapper>

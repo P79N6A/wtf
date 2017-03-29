@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.RkeAffichecontentDao">
+
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.RkeAffichecontentEntity" >
+            <id jdbcType="VARCHAR" column="AC_ID" property="acId" />
+            <result jdbcType="VARCHAR" column="AC_AT_ID" property="acAtId" />
+            <result jdbcType="VARCHAR" column="AC_CAPTION" property="accaption" />
+            <result jdbcType="VARCHAR" column="AC_CONTEXT" property="accontext" />
+            <result jdbcType="VARCHAR" column="AC_CREATETIME" property="accreateTime" />
+            <result jdbcType="VARCHAR" column="AC_UPDATETIME" property="acupdateTime" />
+            <result jdbcType="VARCHAR" column="AC_ENABLE" property="acenable" />
+            <result jdbcType="VARCHAR" column="AC_SCOPE" property="acscope" />
+            <result jdbcType="VARCHAR" column="CREATER" property="creater" />
+            <result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, AC_AT_ID, AC_CAPTION, AC_CONTEXT, AC_CREATETIME, AC_UPDATETIME, AC_ENABLE, AC_SCOPE, CREATER, ACCOUNTSID
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.RkeAffichecontentEntity">
+        insert into T_RKE_AFFICHECONTENT
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="acAtId != null">AC_AT_ID,</if>
+                <if test="accaption != null">AC_CAPTION,</if>
+                <if test="accontext != null">AC_CONTEXT,</if>
+                <if test="accreateTime != null">AC_CREATETIME,</if>
+                <if test="acupdateTime != null">AC_UPDATETIME,</if>
+                <if test="acenable != null">AC_ENABLE,</if>
+                <if test="acscope != null">AC_SCOPE,</if>
+                <if test="creater != null">CREATER,</if>
+                <if test="accountSid != null">ACCOUNTSID</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="acAtId != null">#{acAtId, jdbcType=VARCHAR},</if>
+                <if test="accaption != null">#{accaption, jdbcType=VARCHAR},</if>
+                <if test="accontext != null">#{accontext, jdbcType=VARCHAR},</if>
+                <if test="accreateTime != null">#{accreateTime, jdbcType=VARCHAR},</if>
+                <if test="acupdateTime != null">#{acupdateTime, jdbcType=VARCHAR},</if>
+                <if test="acenable != null">#{acenable, jdbcType=VARCHAR},</if>
+                <if test="acscope != null">#{acscope, jdbcType=VARCHAR},</if>
+                <if test="creater != null">#{creater, jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">#{accountSid, jdbcType=VARCHAR}</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        delete from T_RKE_AFFICHECONTENT
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="update" parameterType="cn.tc.ulife.platform.door.mode.RkeAffichecontentEntity">
+        update T_RKE_AFFICHECONTENT
+        <set>
+                <if test="acAtId != null">and AC_AT_ID =  #{acAtId,jdbcType=VARCHAR},</if>
+                <if test="accaption != null">and AC_CAPTION =  #{accaption,jdbcType=VARCHAR},</if>
+                <if test="accontext != null">and AC_CONTEXT =  #{accontext,jdbcType=VARCHAR},</if>
+                <if test="accreateTime != null">and AC_CREATETIME =  #{accreateTime,jdbcType=VARCHAR},</if>
+                <if test="acupdateTime != null">and AC_UPDATETIME =  #{acupdateTime,jdbcType=VARCHAR},</if>
+                <if test="acenable != null">and AC_ENABLE =  #{acenable,jdbcType=VARCHAR},</if>
+                <if test="acscope != null">and AC_SCOPE =  #{acscope,jdbcType=VARCHAR},</if>
+                <if test="creater != null">and CREATER =  #{creater,jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">and ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR}</if>
+        </set>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AFFICHECONTENT
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AFFICHECONTENT
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+    <select id="getCount" resultType="Integer" parameterType="map" >
+        select
+        count(id)
+        from T_RKE_AFFICHECONTENT
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+</mapper>

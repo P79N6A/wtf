@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.tree.dao.TreeDao">
+	<!-- 获取地区树 -->
+	<select id="getAreaTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT A.AID, A.ID ,A.ParentID PID, A.`Name` ,A.IsLastLevel isleaf,A.Name  TEXT,A.`CODE`,A.FZM ,A.`Level` from t_area as A  
+		where A.`Level`='0' AND A.ZT=0 
+		ORDER BY FZM
+	</select>
+	
+	<select id="getAreaTreeChildren" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT A.AID, A.ID ,A.ParentID PID, A.`Name`,A.IsLastLevel isleaf,A.Name  TEXT,A.`CODE`,A.FZM ,A.`Level` from t_area as A  where A.ParentID=#{pid} AND A.ZT=0 ORDER BY FZM				
+	</select>
+
+    <!--获取商品分类 树-->
+    <select id="getLeadTypeTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+        SELECT ID,`NAME` TEXT,ISLEAF,PID,ZT,LOGO AS URL  FROM `t_sc_spfl` where PID=0 AND ZT IN (0,1)
+    </select>
+
+    <select id="getChildTypeTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+        SELECT ID,`NAME` TEXT,ISLEAF,PID,ZT,LOGO AS URL   FROM `t_sc_spfl` where PID=#{pid} AND ZT IN (0,1)
+    </select>
+
+    <!--获取产品线商品分类 树-->
+    <select id="getPLineFlTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+       SELECT
+            F.ID,
+			F.NAME TEXT,
+			F.ISLEAF,
+			IF(p.ID is NULL, 0, 1)  zt,
+			F.TYPE
+		FROM
+			T_SC_SPFL f
+		left JOIN t_sc_plinespfl p ON f.ID = p.FLID AND p.PLID = #{plid}
+ 		<!--left JOIN t_sc_productline l ON p.PLID = l.ID -->
+		WHERE f.ZT = 0 AND f.PID = 0
+		ORDER BY F.XH
+    </select>
+
+    <select id="getPLineFlTreeChildren" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+        SELECT
+        F.ID,
+        F. NAME TEXT,
+        F.ISLEAF,
+        IF(p.ID is NULL, 0, 1)  zt,
+        F.TYPE
+        FROM
+        T_SC_SPFL f
+        left JOIN (select p.id,p.FLID from t_sc_plinespfl p inner JOIN t_sc_productline l ON p.PLID = l.ID AND p.PLID = #{plid}) p ON f.ID = p.FLID
+        WHERE f.ZT = 0
+        <if test="pid!=null and pid !=''">
+            AND f.PID = #{pid}
+        </if>
+        ORDER BY F.XH
+    </select>
+
+    <!--获取产品线商品分类 树-->
+    <select id="getStoreFlTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+       SELECT
+            F.ID,
+			F.NAME TEXT,
+			F.ISLEAF,
+			IF(p.ID is NULL, 0, 1)  zt,
+			F.TYPE
+		FROM
+			T_SC_SPFL f
+		left JOIN t_sc_plinespfl p ON f.ID = p.FLID AND p.PLID = #{plid}
+ 		<!--left JOIN t_sc_productline l ON p.PLID = l.ID -->
+		WHERE f.ZT = 0 AND f.PID = 0
+		ORDER BY F.XH
+    </select>
+
+    <select id="getStoreFlTreeChildren" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+        SELECT
+        F.ID,
+        F. NAME TEXT,
+        F.ISLEAF,
+        IF(p.ID is NULL, 0, 1)  zt,
+        F.TYPE
+        FROM
+        T_SC_SPFL f
+        left JOIN (select p.id,p.FLID from t_sc_plinespfl p inner JOIN t_sc_productline l ON p.PLID = l.ID AND p.PLID = #{plid}) p ON f.ID = p.FLID
+        WHERE f.ZT = 0
+        <if test="pid!=null and pid !=''">
+            AND f.PID = #{pid}
+        </if>
+        ORDER BY F.XH
+    </select>
+	
+	 <select id="getMarketingCategoryTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+	  SELECT ID,`NAME` TEXT,ISLEAF,PID,'0' as FLAG   FROM `t_yx_gtype` where PID=0 <if test="code!=null and code!=''"> AND CID=#{code}</if>
+	  <if test="plid != null and plid !=''">
+	  	and plid = #{plid}
+	  </if>
+	</select>
+	
+	<select id="getMarketingCategoryChildrenTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+	SELECT ID,`NAME` TEXT,ISLEAF,PID,'0' as FLAG   FROM `t_yx_gtype` where ZT!=0 AND PID=#{pid} 
+	</select>
+	
+</mapper>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html ng-app="h7_6">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>自定义服务缓存</title>
+    <script type="text/javascript" src="../../js/angular-1.3.0.js"></script>
+    <script type="text/javascript" src="../../js/angular-route.min.js"></script>
+    <style type="text/css">
+        body {
+            font-size: 13px;
+        }
+
+        .show {
+            border: solid 1px;
+            padding: 8px;
+            width: 260px;
+            margin: 10px 0px;
+            background-color: #ccc;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="frame" ng-controller="c7_6">
+    <div class="show">
+        <div class="tip">接受的内容是{{result}}</div>
+        <button ng-click="refresh()">刷新</button>
+    </div>
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+
+
+    var h7_6 = angular.module('h7_6', []);
+    h7_6.service("cache", function ($cacheFactory) {
+        return $cacheFactory("mycache", {capacity: 3})
+    });
+    h7_6.controller('c7_6', function ($scope, $http, cache) {
+        var url = "../user/getA";
+
+        $http({
+            method: "GET",
+            url: url,
+            cache: cache
+        }).success(function (data, status, headers, config) {
+            $scope.result = data;
+            cache.put("c", data);
+        });
+        $scope.refresh = function () {
+            var _c = cache.get("c");
+            $scope.result = (_c) ? _c.msg + "来源缓存" : "缓存失败";
+        }
+
+    });
+
+</script>
+</html>

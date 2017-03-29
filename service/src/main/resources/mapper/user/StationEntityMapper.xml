@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.user.dao.StationEntityMapper">
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.server.user.model.StationEntity">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="RESPONIBLEID" property="responibleid" jdbcType="VARCHAR"/>
+        <result column="TEL" property="tel" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="JJIE" property="jjie" jdbcType="VARCHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="REMARK" property="remark" jdbcType="VARCHAR"/>
+        <result column="ZT" property="zt" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="LOGO" property="logo" jdbcType="VARCHAR"/>
+        <result column="WD" property="wd" jdbcType="VARCHAR"/>
+        <result column="JD" property="jd" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, RESPONIBLEID, TEL, ADDRESS, JJIE, QQ, REMARK, ZT, NAME, LOGO, WD, JD
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM T_WY_XZXX
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertSelective" parameterType="cn.tc.ulife.platform.server.user.model.StationEntity">
+        INSERT INTO T_WY_XZXX
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="responibleid != null">
+                RESPONIBLEID,
+            </if>
+            <if test="tel != null">
+                TEL,
+            </if>
+            <if test="address != null">
+                ADDRESS,
+            </if>
+            <if test="jjie != null">
+                JJIE,
+            </if>
+            <if test="qq != null">
+                QQ,
+            </if>
+            <if test="remark != null">
+                REMARK,
+            </if>
+            <if test="zt != null">
+                ZT,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="logo != null">
+                LOGO,
+            </if>
+            <if test="wd != null">
+                WD,
+            </if>
+            <if test="jd != null">
+                JD,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="responibleid != null">
+                #{responibleid,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="jjie != null">
+                #{jjie,jdbcType=VARCHAR},
+            </if>
+            <if test="qq != null">
+                #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                #{zt,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="logo != null">
+                #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="wd != null">
+                #{wd,jdbcType=VARCHAR},
+            </if>
+            <if test="jd != null">
+                #{jd,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.tc.ulife.platform.server.user.model.StationEntity">
+        UPDATE T_WY_XZXX
+        <set>
+            <if test="responibleid != null">
+                RESPONIBLEID = #{responibleid,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                TEL = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="jjie != null">
+                JJIE = #{jjie,jdbcType=VARCHAR},
+            </if>
+            <if test="qq != null">
+                QQ = #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                ZT = #{zt,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="logo != null">
+                LOGO = #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="wd != null">
+                WD = #{wd,jdbcType=VARCHAR},
+            </if>
+            <if test="jd != null">
+                JD = #{jd,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+</mapper>

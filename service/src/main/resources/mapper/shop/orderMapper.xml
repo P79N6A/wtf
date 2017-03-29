@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.OrderMapper">
+	<!--商家获取订单列表-->
+	<select id="getStoreOrderList" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="cn.tc.ulife.platform.server.shop.model.OrderBean">
+		SELECT G.ID,G.PORDERBH,G.PID,G.ORDERBH,G.SJID,G.SJNAME,G.SPID,G.SPNAME,G.DGSL,G.SPRICE,G.YZJ,G.ZHZJ,
+		G.GGID,G.GGSZ,G.GGDW,G.GTIME,G.OZT,G.ZT,G.MTIME,S.LOGO,O.OLY,O.UNAME,O.TEL,O.DZ,O.ZFZT,O.ZFFS,O.TYPE 
+		FROM T_SC_OGOODS G
+		INNER JOIN T_SC_SPXX S ON G.SJID=S.ID
+		INNER JOIN T_SC_ORDER O ON G.PID=O.ID
+		WHERE G.SJID=#{sjid}
+		 <if test="spname != null and spname != ''">
+			AND G.SPNAME LIKE '%${spname}%'
+   		 </if>
+   		 <if test="gtime != null and gtime != ''">
+			AND G.GTIME >= #{gtime}
+   		 </if>
+   		 <if test="mtime != null and mtime != ''">
+			AND G.GTIME &lt;=  #{mtime}
+   		 </if>
+   		 <if test="ozt != null and ozt != ''">
+			AND G.OZT=#{ozt}
+   		 </if>
+   		 <if test="tel != null and tel != ''">
+   		 	AND CONCAT_WS('^',O.TEL,O.UNAME,O.DZ,G.ORDERBH) LIKE '%${tel}%'
+   		 </if>
+		ORDER BY G.GTIME DESC ,G.PID ASC
+		LIMIT #{start},#{limit} 
+	</select>
+	
+	<!--商家获取订单列表 总条数-->
+	<select id="getStoreOrderTotalCount" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="String">
+		SELECT COUNT(*) FROM T_SC_OGOODS G 
+		INNER JOIN T_SC_SPXX S ON G.SJID=S.ID
+		INNER JOIN T_SC_ORDER O ON G.PID=O.ID
+		WHERE G.SJID=#{sjid}
+		 <if test="spname != null and spname != ''">
+			AND G.SPNAME LIKE '%${spname}%'
+   		 </if>
+   		 <if test="gtime != null and gtime != ''">
+			AND G.GTIME >= #{gtime}
+   		 </if>
+   		 <if test="mtime != null and mtime != ''">
+			AND G.GTIME &lt;=  #{mtime}
+   		 </if>
+   		 <if test="ozt != null and ozt != ''">
+			AND G.OZT=#{ozt}
+   		 </if>
+   		 <if test="tel != null and tel != ''">
+			AND CONCAT_WS('^',O.TEL,O.UNAME,O.DZ,G.ORDERBH) LIKE '%${tel}%'
+   		 </if>
+	</select>
+	
+	<!--根据小区获取订单列表-->
+	<select id="getComOrderList" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="cn.tc.ulife.platform.server.shop.model.OrderBean">
+		SELECT O.ID,O.BUYERACCOUNT,O.ORDERBH,O.UID,O.UNAME,O.TEL,O.DZ,O.YZJ,O.ZHZJ,O.GTIME,
+		O.OZT,O.OLY,O.XQID,CO.NAME,O.ZFZT,O.ZFFS,O.MTIME,O.ZT,O.PSRQ,O.TYPE,O.PLINE,O.ZTD
+		FROM T_SC_ORDER O 
+		INNER JOIN T_SYS_UOCOM C ON O.XQID=C.COMID
+		INNER JOIN t_community CO ON O.XQID=CO.CID 
+		WHERE C.OID=#{oid} AND C.RCODE=#{code}
+		 <if test="xqid != null and xqid != ''">
+			AND O.XQID = #{xqid}
+   		 </if>
+   		 <if test="gtime != null and gtime != ''">
+			AND O.GTIME >= #{gtime}
+   		 </if>
+   		 <if test="mtime != null and mtime != ''">
+			AND O.GTIME &lt;=  #{mtime}
+   		 </if>
+   		 <if test="ozt != null and ozt != ''">
+			AND O.OZT=#{ozt}
+   		 </if>
+   		 <if test="tel != null and tel != ''">
+   		 	AND CONCAT_WS('^',O.TEL,O.UNAME,O.DZ,O.ORDERBH) LIKE '%${tel}%'
+   		 </if>
+		ORDER BY O.GTIME DESC
+		LIMIT #{start},#{limit} 
+	</select>
+	
+	<!--商家获取订单列表 总条数-->
+	<select id="getComOrderTotalCount" parameterType="cn.tc.ulife.platform.server.shop.model.OrderBean" resultType="String">
+		SELECT COUNT(*) FROM T_SC_ORDER O 
+		INNER JOIN T_SYS_UOCOM C ON O.XQID=C.COMID
+		INNER JOIN t_community CO ON O.XQID=CO.CID 
+		WHERE C.OID=#{oid} AND C.RCODE=#{code}
+		 <if test="xqid != null and xqid != ''">
+			AND O.XQID = #{xqid}
+   		 </if>
+   		 <if test="gtime != null and gtime != ''">
+			AND O.GTIME >= #{gtime}
+   		 </if>
+   		 <if test="mtime != null and mtime != ''">
+			AND O.GTIME &lt;=  #{mtime}
+   		 </if>
+   		 <if test="ozt != null and ozt != ''">
+			AND O.OZT=#{ozt}
+   		 </if>
+   		 <if test="tel != null and tel != ''">
+   		 	AND CONCAT_WS('^',O.TEL,O.UNAME,O.DZ,O.ORDERBH) LIKE '%${tel}%'
+   		 </if>
+	</select>
+
+    <insert id="insertOrder" parameterType="map">
+
+    </insert>
+
+    <insert id="insertOrderGoods" parameterType="map">
+
+    </insert>
+
+    <select id="queryComdiMarkCount" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.model.Market">
+        SELECT MARKET.*  FROM T_YX_MARKET MARKET
+        INNER JOIN T_YX_MARKETSPMX SPMX  ON MARKET.ID =SPMX.CXID  AND  SPMX.SPID=#{comId}
+        AND  ( SPMX.GGID=#{speId} OR  SPMX.GGID=-1)
+        WHERE NOW() BETWEEN  MARKET.KTIME AND MARKET.JTIME AND MARKET.ZT = 1 AND SPMX.ZT=1 AND SPMX.ISZT = 0;
+    </select>
+
+    <select id="queryBuyComCount" parameterType="map" resultType="String">
+        SELECT SUM(SORDER.DGSL) FROM T_SC_ORDER SORDER
+        WHERE SORDER.UID =#{uid} AND SORDER.GGID=#{speId} AND SORDER.SPID =#{comId}
+        AND SORDER.iszt = 0 AND SORDER.GTIME  BETWEEN #{ktime} AND #{jtime};
+    </select>
+
+    <select id="queryDeviceToken" parameterType="map" resultType="String">
+        SELECT DEVICE.DEVTOKEN
+        FROM T_SC_PRODUCTLINE MODEL
+        INNER JOIN T_KF_USMD USMD ON USMD.PID=MODEL.ID AND MODEL.ZT=0 AND MODEL.XZ= #{type}
+
+        INNER JOIN T_KF_KFXX KFXX ON KFXX.ID =USMD.KFID AND KFXX.ZT=1
+        INNER JOIN T_WY_XZXX XZ ON KFXX.XZID =XZ.ID
+        INNER JOIN T_U_BASEUSER BU ON BU.ID =XZ.FZR
+        INNER JOIN T_SYS_USERROLE UR ON UR.UID =BU.ID
+        INNER JOIN T_SYS_URCOM URC ON URC.URID =UR.ID AND URC.RCODE="XZGLY" AND URC.COMID=#{comId}
+        INNER JOIN T_KF_DEVICE DEVICE ON DEVICE.SERVICEID =KFXX.ID AND DEVICE.ISSEND=0
+        GROUP BY KFXX.ID
+    </select>
+</mapper>

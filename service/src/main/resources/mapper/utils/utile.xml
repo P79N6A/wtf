@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.utils.dao.UtileDao">
+	
+	<!--查询数据 -->
+	<select id="getListData" parameterType="map" resultType="cn.tc.ulife.platform.server.utils.model.UtileBean">
+		${sql}
+	</select>
+	
+	<!-- 删除数据-->
+	<delete id="delData" parameterType="map">
+		${sql}
+	</delete>
+	
+	<!-- 新增数据-->
+	<insert id="addData" parameterType="map">
+		${sql}
+	</insert>
+	
+	<!-- 修改数据-->
+	<update id="editData" parameterType="map">
+		${sql}
+	</update>
+	
+	<!-- 修改数据-->
+	<update id="updateData" parameterType="map">
+		${sql}
+	</update>
+
+</mapper>

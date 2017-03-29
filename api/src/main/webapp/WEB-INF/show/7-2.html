@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="h7_2">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>服务的多例性</title>
+    <script type="text/javascript" src="../../js/angular-1.3.0.js"></script>
+    <script type="text/javascript" src="../../js/angular-route.min.js"></script>
+    <style type="text/css">
+        body {
+            font-size: 13px;
+        }
+
+        .show {
+            border: solid 1px;
+            padding: 8px;
+            width: 260px;
+            margin: 10px 0px;
+            background-color: #ccc;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="frame" ng-controller="c7_2">
+    <div class="show">
+        <div class="tip">POST返回的结果是：{{result}}</div>
+        <button ng-click="send()">发送</button>
+    </div>
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+
+
+    var h7_2 = angular.module('h7_2', []);
+    h7_2.config(function ($httpProvider) {
+        $httpProvider.defaults.transformRequest = function (obj) {
+            var arrStr = [];
+            console.dir("obj:" + obj);
+            for (var p in obj) {
+                arrStr.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+            }
+            console.dir(arrStr);
+            return arrStr.join("&");
+        };
+        $httpProvider.defaults.headers.post = {
+            'Context-Type': 'application/x-www/form-urlencoded'
+        }
+    });
+
+
+    h7_2.controller('c7_2', function ($scope, $http) {
+        var postData = {name: "小二"};
+        $scope.send = function () {
+            $http.post('../user/getA', postData)
+                    .success(function (data, status, headers, config) {
+                        $scope.result = data;
+                        console.dir(data);
+                    })
+        }
+
+    });
+
+</script>
+</html>

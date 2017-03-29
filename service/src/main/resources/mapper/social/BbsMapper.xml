@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.social.dao">
+	<!-- 社区帖子管理 -->
+	<select id="getListBbs" parameterType="cn.tc.ulife.platform.server.social.model.BbsModel"
+		resultType="cn.tc.ulife.platform.server.social.model.BbsModel">
+		SELECT bbs.ID, bbs.UID, bbs.UNAME, bbs.HDZT, bbs.LXID, bbs.KSSJ, bbs.XQID,
+		bbs.XQCODE, bbs.HDJS,
+		bbs.ISZS, bbs.ISTS, bbs.ISNM, bbs.TP1, bbs.TP2,
+		bbs.TP3, bbs.TYPE,bbs.FQLX,bbs.MTIME,bbs.MUID, bbs.ZT from t_hd_bbs
+		bbs
+		where bbs.XQID = %#{XQID}% or bbs.HDJS LIKE %#{HDJS}% or bbs.UNAME
+		LIKE %#{UNAME}% or bbs.KSSJ > #{KSSJ} order by bbs.ID desc LIMIT 0, 10
+	</select>
+	
+	<!-- APP 社区帖子列表 -->
+		<select id="getListBbs_APP" parameterType="cn.tc.ulife.platform.server.social.model.BbsModel"
+		resultType="cn.tc.ulife.platform.server.social.model.BbsModel">
+		SELECT bbs.ID, bbs.UID, bbs.UNAME, bbs.HDZT, bbs.LXID, bbs.KSSJ, bbs.XQID,
+		bbs.XQCODE, bbs.HDJS,
+		bbs.ISZS, bbs.ISTS, bbs.ISNM, bbs.TP1, bbs.TP2,
+		bbs.TP3, bbs.TYPE,bbs.FQLX,bbs.MTIME,bbs.MUID, bbs.ZT from t_hd_bbs
+		bbs
+		where bbs.XQID = %#{XQID}% or bbs.HDJS LIKE %#{HDJS}% or bbs.UNAME
+		LIKE %#{UNAME}% or bbs.KSSJ > #{KSSJ} order by bbs.ID desc LIMIT 0, 10
+	</select>
+
+	<update id="updateBbs" parameterType="cn.tc.ulife.platform.server.social.model.BbsModel">
+		UPDATE t_hd_bbs bbs SET bbs.MTIME = now()
+		<if test="ISZS != null and ISZS != ''">
+			, bbs.ISZS = #{ISZS}
+		</if>
+		<if test="ZT != null and ZT != ''">
+			, bbs.ZT = '1'
+		</if>
+		where bbs.ID = #{ID}
+	</update>
+
+</mapper>

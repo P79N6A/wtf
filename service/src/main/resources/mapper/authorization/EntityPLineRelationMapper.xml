@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.authorization.dao.EntityPLineRelationMapper">
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <id column="NAME" property="name" jdbcType="VARCHAR"/>
+        <id column="LOGO" property="logo" jdbcType="VARCHAR"/>
+        <result column="PID" property="pid" jdbcType="VARCHAR"/>
+        <result column="UID" property="uid" jdbcType="VARCHAR"/>
+        <result column="ZKL" property="zkl" jdbcType="VARCHAR"/>
+        <result column="CID" property="cid" jdbcType="VARCHAR"/>
+        <result column="CTIME" property="ctime" jdbcType="VARCHAR"/>
+        <result column="MTIME" property="mtime" jdbcType="VARCHAR"/>
+        <result column="ZT" property="zt" jdbcType="VARCHAR"/>
+        <result column="RCODE" property="rcode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="PL_Base_Column_List">
+       PL.NAME,PL.LOGO,PL.ID AS PID
+  </sql>
+    <sql id="PLU_Base_Column_List">
+        PLU.ID,  PLU.UID, PLU.ZKL,PLU.CID, PLU.CTIME, PLU.MTIME,PLU.ZT, PLU.RCODE
+    </sql>
+    <insert id="insertPLRelation" parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+        INSERT INTO T_SYS_PLINEISSUED
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="pid != null">
+                PID,
+            </if>
+            <if test="uid != null">
+                UID,
+            </if>
+            <if test="zkl != null">
+                ZKL,
+            </if>
+            <if test="cid != null">
+                CID,
+            </if>
+
+            <if test="mtime != null">
+                MTIME,
+            </if>
+            <if test="zt != null">
+                ZT,
+            </if>
+            <if test="rcode != null">
+                RCODE,
+            </if>
+            CTIME
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="pid != null">
+                #{pid,jdbcType=VARCHAR},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="zkl != null">
+                #{zkl,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                #{cid,jdbcType=VARCHAR},
+            </if>
+
+            <if test="mtime != null">
+                #{mtime,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                #{zt,jdbcType=VARCHAR},
+            </if>
+            <if test="rcode != null">
+                #{rcode,jdbcType=VARCHAR},
+            </if>
+            NOW()
+        </trim>
+    </insert>
+    <update id="updatePLRelationByPrimaryKey"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+
+        UPDATE T_SYS_PLINEISSUED
+        <set>
+            <if test="pid != null">
+                PID = #{pid,jdbcType=VARCHAR},
+            </if>
+            <if test="uid != null">
+                UID = #{uid,jdbcType=VARCHAR},
+            </if>
+            <if test="zkl != null">
+                ZKL = #{zkl,jdbcType=VARCHAR},
+            </if>
+            <if test="cid != null">
+                CID = #{cid,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                CTIME = #{ctime,jdbcType=VARCHAR},
+            </if>
+
+            <if test="zt != null">
+                ZT = #{zt,jdbcType=VARCHAR},
+            </if>
+            <if test="rcode != null">
+                RCODE = #{rcode,jdbcType=VARCHAR},
+            </if>
+            MTIME = NOW()
+        </set>
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="selectPLineRelation" parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation"
+            resultType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+        <!-- SELECT PL.*,
+         <include refid="PLU_Base_Column_List"></include>
+         FROM (
+         SELECT
+         <include refid="PL_Base_Column_List"></include>o
+         FROM T_SC_PRODUCTLINE PL
+         LIMIT #{limit},#{start}
+         ) PL
+         LEFT JOIN T_SYS_PLINEISSUED PLU ON PL.ID=PLU.PID AND PLU.UID=#{uid}
+         WHERE PL.ZT=0 AND PLU.ZT=0 AND (PLU.CID =#{cid} OR PL.CID=#{cid})
+         ORDER BY PL.SORT ASC-->
+        SELECT
+        <include refid="PL_Base_Column_List"/>,
+        <include refid="PLU_Base_Column_List"/>
+        FROM T_SC_PRODUCTLINE PL
+        LEFT JOIN T_SYS_PLINEISSUED PLU ON PL.ID=PLU.PID AND PLU.UID=#{uid} AND PLU.CID =#{cid} AND PLU.ZT=0
+        WHERE PL.ZT=0
+        <!--ORDER BY PL.SORT ASC-->
+    </select>
+
+    <select id="checkPLisExit" parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation"
+            resultType="int">
+        
+        SELECT COUNT(*) FROM T_SYS_PLINEISSUED ISSUED WHERE ISSUED.UID=#{uid} AND ISSUED.PID=#{pid} AND ISSUED.CID=#{cid} AND ISSUED.ZT=0 ;
+    </select>
+
+
+    <update id="delectPlByKey" parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+      UPDATE    T_SYS_PLINEISSUED  SET ZT=1 WHERE ID=#{id}
+    </update>
+
+
+    <select id="queryPLRelationExit" parameterType="String" resultType="int">
+            SELECT COUNT(*) FROM T_SYS_PLINEISSUED PLU WHERE PLU.UID=#{uid} AND PLU.ZT=0
+    </select>
+
+    <select id="queryAgentPLRelation"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation"
+            resultType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+        SELECT PL.NAME,PL.LOGO,PL.ID AS PID
+        FROM T_SYS_PLINEISSUED PLU
+        INNER JOIN T_SYS_USERENTITY UE ON UE.OID=PLU.UID AND UE.RCODE="DLS" AND UE.UID=#{cid}
+        INNER JOIN T_SC_PRODUCTLINE PL ON PL.ID=PLU.PID AND PLU.RCODE="DLS" AND PLU.ZT=0
+        <!--
+         LEFT JOIN T_SYS_PLINEISSUED PLU1 ON PLU1.CID=UE.UID AND PLU1.UID =3-->
+    </select>
+
+    <select id="queryStorePlRelation"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation"
+            resultType="cn.tc.ulife.platform.server.authorization.model.EntityPLineRelation">
+      SELECT PL.NAME,PL.LOGO,PL.ID AS PID, PLU.ID, PLU.UID, PLU.ZKL,PLU.CID, PLU.CTIME, PLU.MTIME,PLU.ZT, PLU.RCODE
+      FROM T_SYS_PLINEISSUED  PLU
+      INNER JOIN T_SC_PRODUCTLINE PL ON PLU.PID=PL.ID  AND PLU.ZT=0
+      WHERE  PLU.UID=#{uid}  AND  PLU.RCODE="SJGLY"
+    </select>
+
+</mapper>

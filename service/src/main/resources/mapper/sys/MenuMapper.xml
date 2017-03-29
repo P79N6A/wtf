@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.sys.dao.MenuMapper">
+
+	<!--用户角色菜单-->
+	<select id="getMenuTree" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT R.ID,R.GROUPID,R.NAME TEXT ,R.CODE,R.PID,R.ISLEAF,R.ICON,R.URL,R.ISSUED FROM T_SYS_ROOT  R
+		INNER JOIN T_SYS_USERROOT ur ON ur.RID = r.ID
+		WHERE  ur.UID = #{uid} AND R.ISLEAF=0
+		ORDER BY R.SORT
+	</select>
+	
+	<!-- 查询子菜单 -->
+	<select id="getMenuChildren" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT R.ID,R.GROUPID,R.NAME TEXT ,R.CODE,R.PID,R.ISLEAF,R.ICON,R.URL,R.ISSUED FROM T_SYS_ROOT  R
+		INNER JOIN T_SYS_USERROOT ur ON ur.RID = r.ID
+		WHERE  ur.UID = #{uid} AND R.PID=#{pid}
+		ORDER BY R.SORT	
+	</select>
+	
+	<!--admin角色菜单-->
+	<select id="getAdminMenu" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT R.ID,R.GROUPID,R.NAME TEXT ,R.CODE,R.PID,R.ISLEAF,R.ICON,R.URL,R.ISSUED FROM T_SYS_ROOT  R
+		WHERE R.ISLEAF=0
+		ORDER BY R.SORT
+	</select>
+	
+	<!-- 查询admin子菜单 -->
+	<select id="getAdminMenuChildren" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT R.ID,R.GROUPID,R.NAME TEXT ,R.CODE,R.PID,R.ISLEAF,R.ICON,R.URL,R.ISSUED FROM T_SYS_ROOT  R
+		WHERE R.PID=#{pid}
+		ORDER BY R.SORT	
+	</select>
+	
+	<!-- 查询功能按钮 -->
+	<select id="getMenuButton" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean" resultType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		SELECT ra.id,ra.name,ra.code,ra.url,ra.rid,ra.rcode from T_SYS_ROOTACTION ra 
+		INNER JOIN T_SYS_URACTION ua ON ra.ID = ua.AID
+		INNER JOIN T_SYS_ROOT r ON r.ID = ra.RID
+		INNER JOIN T_SYS_USERROOT ur ON ua.URID = ur.ID AND ur.UID = ua.UID
+		WHERE ur.UID = #{uid} and ra.RID = #{rid}
+	</select>
+		
+	<!-- 查询管理员功能按钮 -->
+	<select id="getAdminMenuButton" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean" resultType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		SELECT ra.id,ra.name,ra.code,ra.url,ra.rid,ra.rcode from T_SYS_ROOTACTION ra 
+			INNER JOIN T_SYS_ROOT r ON r.ID = ra.RID
+			where ra.RID = #{rid}
+	</select>
+
+	<!-- 新增菜单 -->
+	<insert id="saveMenu" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		insert into T_SYS_ROOT (
+		<if test="groupid !=null and groupid!=''">
+			GROUPID,
+		</if>
+		NAME,CODE,LEVEL,URL,PID,ISLEAF,SORT,CID,CTIME,MTIME,
+		<if test="zt !=null and zt!=''">
+			ZT,
+		</if>
+		TYPE,ISSUED) values
+		(
+		<if test="groupid !=null and groupid!=''">
+			#{groupid},
+		</if>
+			#{name},#{code},#{level},#{url},#{pid},#{isleaf},#{sort},#{cid},now(),now(),
+		<if test="zt !=null and zt!=''">
+			#{zt},
+		</if>
+			#{type},#{issued}
+		)
+	</insert>
+	
+	
+	<!-- 新增菜单功能按钮 -->
+	<insert id="saveMenuBtton" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		insert into T_SYS_ROOTACTION (RID,RCODE,NAME,CODE,URL,SORT,CID,CTIME,MTIME,JS) values
+		(
+			#{rid},#{rcode},#{name},#{code},#{url},#{sort},#{cid},now(),now(),#{js}
+		)
+	</insert>
+	
+	<!-- 修改菜单 -->
+	<update id="updateMenu" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		update T_SYS_ROOT set 
+		<if test="groupid !=null and groupid !=''">
+			GROUPID = #{groupid},	
+		</if>
+		<if test="name !=null and name !=''">
+			NAME = #{name},	
+		</if>
+		<if test="code !=null and code !=''">
+			code = #{code},	
+		</if>
+		<if test="level !=null and level !=''">
+			LEVEL = #{level},	
+		</if>
+		<if test="url !=null and url !=''">
+			URL = #{url},	
+		</if>
+		<if test="pid !=null and pid !=''">
+			PID = #{pid},	
+		</if>
+		<if test="isleaf !=null and isleaf !=''">
+			ISLEAF = #{isleaf},	
+		</if>
+		<if test="sort !=null and sort !=''">
+			SORT = #{sort},	
+		</if>
+		<if test="zt !=null and zt !=''">
+			ZT = #{zt},	
+		</if>
+		<if test="type !=null and type !=''">
+			TYPE = #{type},	
+		</if>
+		<if test="issued !=null and issued !=''">
+			ISSUED = #{issued},	
+		</if>
+		MTIME = now() 
+		where id = #{id}
+	</update>
+	
+	<!-- 修改菜单功能 -->
+	<update id="updateMenuButton" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		update T_SYS_ROOTACTION set
+		<if test="rid != null and rid != ''">
+			RID = #{rid},
+		</if>
+		<if test="rcode != null and rcode != ''">
+			RCODE = #{rcode},
+		</if>
+		<if test="name != null and name != ''">
+			NAME = #{name},
+		</if>
+		<if test="code != null and code != ''">
+			CODE = #{code},
+		</if>
+		<if test="url != null and url != ''">
+			URL = #{url},
+		</if>
+		<if test="sort != null and sort != ''">
+			SORT = #{sort},
+		</if>
+		<if test="zt != null and zt != ''">
+			ZT = #{zt},
+		</if>
+		<if test="js != null and js != ''">
+			JS = #{js},
+		</if>
+		MTIME = now()
+		where id = #{id}
+	</update>
+	
+	<!-- 删除菜单 -->
+	<delete id="removeMenu" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		delete from T_SYS_ROOT where id = #{id}
+	</delete>
+	
+	<!-- 删除菜单功能按钮 -->
+	<delete id="removeMenuButton" parameterType="cn.tc.ulife.platform.server.sys.model.MenuBean">
+		delete from T_SYS_ROOTACTION where id = #{id}
+	</delete>
+	
+</mapper>

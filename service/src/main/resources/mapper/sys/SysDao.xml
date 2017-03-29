@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.sys.dao.SysDao">
+
+    <!-- 查询系统公告-->
+    <select id="querySysNotice" parameterType="map" resultType="cn.tc.ulife.platform.server.sys.model.FwMsgEntity">
+        SELECT
+          m.ID,
+          m.TITLE,
+          m.CONTENT AS MSG,
+          m.ZT,
+          m.TYPE AS MTYPE,
+          m.CTIME,
+          m.UID AS CUID,
+          BU.NAME AS CNAME
+        FROM T_SYS_NOTICE m
+        LEFT JOIN T_U_BASEUSER bu ON bu.ID = m.UID
+        <!--WHERE-->
+        <if test="type ==1">
+            <!--m.zt = 1-->
+            ORDER BY m.CTIME DESC
+            LIMIT 1;
+        </if>
+        <if test="type ==2">
+            <!--m.zt in (1,2)-->
+            ORDER BY m.CTIME DESC
+            LIMIT #{ofset}, #{psize};
+        </if>
+    </select>
+
+    <!-- 添加系统公告-->
+    <insert id="addSysNotice" parameterType="map">
+        INSERT INTO T_SYS_NOTICE(title,content,uid,ctime,zt)
+        VALUES(#{title,jdbcType=VARCHAR},#{msg,jdbcType=VARCHAR},#{uid,jdbcType=INTEGER},now(),'0')
+    </insert>
+
+    <!-- 修改系统公告-->
+    <update id="updateSysNotice" parameterType="map">
+        UPDATE T_SYS_NOTICE SET ZT = #{zt}, MTIME = now() WHERE ID = #{id}
+    </update>
+
+    <!-- 查询系统公告总数 -->
+    <select id="getSysNoticeTotal" parameterType="map" resultType="String">
+        SELECT COUNT(*) FROM T_SYS_NOTICE
+    </select>
+
+    <!-- 查询积分规则-->
+    <select id="queryIntegralRules" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.sys.model.AppSignedEntity">
+        SELECT
+        id,
+        CODENAME AS name,
+        CODECODE AS DayNum,
+        CODEVALUE AS integral,
+        ctime,
+        mtime
+        FROM T_SYS_ALLCODE WHERE CODETYPE='SIGNRULE'
+    </select>
+
+    <!-- 查询积分规则总数-->
+    <select id="getIntegralRuleTotal" parameterType="map" resultType="String">
+        SELECT COUNT(*) FROM T_SYS_ALLCODE WHERE CODETYPE='SIGNRULE'
+    </select>
+
+    <!-- 修改积分规则-->
+    <update id="updateIntegralRule" parameterType="map">
+        UPDATE T_SYS_ALLCODE SET CODEVALUE = #{integral} WHERE ID = #{id}
+    </update>
+</mapper>

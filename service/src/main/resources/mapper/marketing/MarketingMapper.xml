@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.marketing.dao.MarketingDao">
+	
+	<!-- 查询营销列表 -->
+	<select id="getPromotionRules" parameterType="cn.tc.ulife.platform.server.marketing.model.PromotionRulesBean" resultType="cn.tc.ulife.platform.server.marketing.model.PromotionRulesVo">
+		SELECT A.ID,A.NAME, A.CODE,A.MIAOS,A.CTIME,A.MTIME,A.ZT FROM T_YX_MARKETGZ A
+		<if test="name!=null and name!= '' ">
+			WHERE A.NAME LIKE '%${name}%'
+        </if>
+		ORDER BY A.CTIME DESC
+        <if test="limit != 0">
+        	limit #{start},#{limit}
+        </if>
+	</select>
+	
+	<!-- 新增营销规则 -->
+	<insert id="savePromotionRules" parameterType="cn.tc.ulife.platform.server.marketing.model.PromotionRulesBean">
+		insert into T_YX_MARKETGZ(NAME,CODE,MIAOS,ZT,CTIME,MTIME)
+		 values(
+		 	#{name,jdbcType=VARCHAR},
+			#{code,jdbcType=VARCHAR},
+			#{miaos,jdbcType=VARCHAR},
+			'0',
+			now(),
+			now()
+		)
+	</insert>
+	
+	<!-- 修改营销规则 -->
+	<update id="updatePromotionRules" parameterType="cn.tc.ulife.platform.server.marketing.model.PromotionRulesBean">
+		update T_YX_MARKETGZ 
+		<set>
+			<if test="name != null">NAME=#{name,jdbcType=VARCHAR},</if>
+			<if test="code != null">CODE=#{code},</if>
+			<if test="miaos != null">MIAOS=#{miaos,jdbcType=VARCHAR},</if>
+			<if test="zt != null">zt=#{zt,jdbcType=VARCHAR},</if>
+			MTIME = now()
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<!-- 批量删除营销规则 -->
+	<delete id="removePromotionRules" parameterType="cn.tc.ulife.platform.server.marketing.model.PromotionRulesBean">
+		delete from T_YX_MARKETGZ where id in (${ids})
+	</delete>
+	
+	<!--获取营销类目 列表-->
+	<select id="getYxTypeList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketingCategoryBean"  resultType="cn.tc.ulife.platform.server.marketing.model.MarketingCategoryBean">
+		SELECT DISTINCT S.ID,S.NAME,S.PID,S.XH,S.MTIME,S.CID,S.ZT,S.ISLEAF,S.LOGO,S.ISSH,S.CODE,RS.NAME AS PNAME,g.URL,g.type,
+		(SELECT v.ID FROM t_yx_gtypegoods v WHERE  TYPE in(1,2) AND s.ID=v.GTID) as gsid
+		FROM  t_yx_gtype  S 
+	    LEFT JOIN t_yx_gtype RS ON S.PID=RS.ID
+	    LEFT  JOIN t_yx_gtypegoods g ON g.GTID = s.ID 
+	    where S.ZT!=0 AND (S.ID=#{id} OR S.PID=#{id}) 
+		ORDER BY ID
+	</select>
+	
+	<!-- 新增营销类目 -->
+	<insert id="insertYxGtype" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketingCategoryBean">
+		INSERT INTO t_yx_gtype(name,pid,plid,code,logo,xh,isleaf,ctime,mtime,cid,issh,zt)
+		VALUES(#{name},#{pid},#{plid},#{code},#{logo},#{xh},#{isleaf},NOW(),NOW(),#{cid},#{issh},#{zt})
+	</insert>
+	
+	<!-- 修改营销类目 -->
+	<update id="editYxGtype" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketingCategoryBean">
+		UPDATE t_yx_gtype
+		<set>
+			mtime=now()
+			<if test="pid!=null and pid!=''">
+				,pid=#{pid}
+			</if>
+			<if test="name!=null and name!=''">
+				,name=#{name}
+			</if>
+			<if test="code!=null and code!=''">
+				,code=#{code}
+			</if>
+			<if test="logo!=null and logo!=''">
+				,logo=#{logo}
+			</if>
+			<if test="xh!=null and xh!=''">
+				,xh=#{xh}
+			</if>
+			<if test="isleaf!=null and isleaf!=''">
+				,isleaf=#{isleaf}
+			</if>
+			<if test="cid!=null and cid!=''">
+				,cid=#{cid}
+			</if>
+			<if test="issh!=null and issh!=''">
+				,issh=#{issh}
+			</if>
+			<if test="zt!=null and zt!=''">
+				,zt=#{zt}
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<!-- 获取产品线绑定的商品分类 -->
+	<select id="getProductLineFl" parameterType="cn.tc.ulife.platform.server.tree.model.TreeNode" resultType="cn.tc.ulife.platform.server.tree.model.TreeNode">
+		SELECT
+			F.id,
+			F. NAME text,
+			F.isleaf,
+			IFNULL(d.GID,0) flag
+		FROM
+			T_SC_SPFL f
+		INNER JOIN t_sc_plinespfl s ON f.ID = s.FLID and s.PLID=#{plid}
+		LEFT JOIN T_YX_GTYPEGOODS d ON s.FLID = d.GID and 1=1 
+		<if test="gtid !=null and gtid!=''">
+			and d.GTID=#{gtid}
+		</if>
+	</select>
+	
+	<!--添加商品与类目映射-->
+	<insert id="insertGtypeGoods" parameterType="cn.tc.ulife.platform.server.marketing.model.YxGtypeGoods">
+		INSERT INTO t_yx_gtypegoods(gtid,gid,type,ctime,mtime,cid,url)
+		VALUES(#{gtid},#{gid},#{type},now(),now(),#{cid},#{url})
+	</insert>
+	
+	<!--更新商品与类目映射(营销类目)-->
+	<update id="updGtypeGoods" parameterType="cn.tc.ulife.platform.server.marketing.model.YxGtypeGoods">
+		UPDATE t_yx_gtypegoods
+		<set>
+			mtime=now()
+			<if test="type!=null and type!=''">
+				,type=#{type}
+			</if>
+			<if test="url!=null and url!=''">
+				,url=#{url}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<!--营销主题列表-->
+	<select id="getMarketThemeList" parameterType="cn.tc.ulife.platform.server.marketing.model.YxStyleBean" resultType="cn.tc.ulife.platform.server.marketing.model.YxStyleBean">	
+		SELECT s.ID,s.KTIME,s.JTIME,s.ACTIVITY_DESC depict,s.TYPE,s.YXID,s.TABLE_NAME tableName,s.TABLE_URL tableUrl,
+		s.SORT,s.CTIME,s.STYPE,s.LINK_URL linkUrl,s.CID,s.ZT,s.ISZS,S.COMID xqid  
+		FROM t_yx_style s where S.COMID=#{xqid} 
+		<if test="tableName != null and tableName != ''">
+		  		and s.TABLE_NAME  LIKE '%${tableName}%'
+		</if>	
+		ORDER BY S.CTIME DESC
+	   <if test="limit != 0">
+        	limit #{start},#{limit}
+        </if>
+	</select>	
+	
+	<!-- 营销主题总数 -->
+	<select id="getMarketThemeListCount" parameterType="cn.tc.ulife.platform.server.marketing.model.YxStyleBean" resultType="int">
+	 SELECT count(s.ID)   FROM t_yx_style s where S.COMID=#{xqid} 
+     <if test="tableName != null and tableName != ''">and s.TABLE_NAME  LIKE '%${tableName}%'</if>
+   </select>
+	
+	<!--插入营销主题-->
+   <insert id="addYxStyle" parameterType="cn.tc.ulife.platform.server.marketing.model.YxStyleBean" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO t_yx_style (
+		<if test="ktime != null and ktime != ''">KTIME,</if>
+		<if test="jtime != null and jtime != ''">JTIME,</if>
+		<if test="depict != null and depict != ''">ACTIVITY_DESC,</if>
+		<if test="type != null and type != ''">TYPE,</if>
+		<if test="yxid != null and yxid != ''">YXID,</if>
+		<if test="tableName != null and tableName != ''">TABLE_NAME,</if>
+		<if test="sort != null and sort != ''">SORT,</if>
+		<if test="stype != null and stype != ''">STYPE,</if>
+		<if test="linkUrl != null and linkUrl != ''">LINK_URL,</if>	
+		<if test="iszs != null and iszs != ''">ISZS,</if>
+		<if test="xqid != null and xqid != ''">COMID,</if>		
+		 CID,ZT,CTIME		
+		 ) VALUES (
+		 <if test="ktime != null and ktime != ''">#{ktime},</if>
+		 <if test="jtime != null and jtime != ''">#{jtime},</if>
+		 <if test="depict != null and depict != ''">#{depict,jdbcType=VARCHAR},</if>
+		 <if test="type != null and type != ''">#{type},</if>
+		 <if test="yxid != null and yxid != ''">#{yxid,jdbcType=VARCHAR},</if>
+		 <if test="tableName != null and tableName != ''">#{tableName,jdbcType=VARCHAR},</if>
+		 <if test="sort != null and sort != ''">#{sort},</if>
+		 <if test="stype != null and stype != ''">#{stype},</if>
+		 <if test="linkUrl != null and linkUrl != ''">#{linkUrl,jdbcType=VARCHAR},</if>
+		 <if test="iszs != null and iszs != ''">#{iszs},</if>
+		 <if test="xqid != null and xqid != ''">#{xqid},</if>		
+		 #{cid},1,now()	
+		 ) 
+   </insert>
+	
+   <!--营销主题  选中的商品-->
+   <select id="getThemeSelectedSp" parameterType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean" resultType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean">
+	   SELECT SP.ID,SP.`NAME`  FROM 
+	   (select S.ID,S.TABLE_NAME,C.SID  from t_yx_style S  LEFT JOIN t_yx_comdity  C ON S.ID=C.COMDITY_ID WHERE C.CTYPE=2 and S.ID=#{id}) T
+	   LEFT JOIN t_sc_spxx SP ON T.SID=SP.ID
+   </select>
+   
+   <!--获取代理商下的商家-->
+    <select id="getSellCom" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+       SELECT S.ID,S.`NAME` NAME FROM  `t_sc_store` S  
+       WHERE s.CID=#{code}  AND S.ZT=0
+    </select>
+	
+	<!-- 获取营销主题绑定商品的选择列表 -->
+	<select id="getShowFloorSelectSp" parameterType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean" resultType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean">
+  	  SELECT * FROM (
+  	  	SELECT ST.ID SJID,ST.NAME SJMC,SP.ID,SP.NAME,SP.ISST,SP.LOGO PSY FROM T_SC_STORE ST 
+		INNER JOIN T_SC_SPXX SP ON ST.ID=SP.STOREID AND SP.ISSJ=1 AND SP.ISSH=1  AND SP.ISST !=2 AND SP.ZT=0
+		where SP.STOREID=#{sjid}
+		<if test="name != null and name != ''">and SP.`NAME` LIKE CONCAT(CONCAT('%',#{name}),'%')</if>	
+		)T
+		LEFT JOIN (
+			SELECT A.CXID,B.NAME cxName,A.SPID,A.GGID,C.GGBZ,B.KTIME,B.JTIME,B.GZCODE FROM T_YX_MARKETSPMX A 
+			INNER JOIN T_YX_MARKET B ON A.CXID=B.ID
+			INNER JOIN t_sc_spgg C ON A.GGID=C.ID
+			WHERE B.ZT=1 AND B.JTIME>NOW() AND B.SJID=#{sjid}
+		UNION ALL 
+		  SELECT F.ID,F.NAME cxName,F.SPID,F.GGID,G.GGBZ,F.KTIME,F.JTIME,'PINTUAN' FROM T_YX_FGROUPS F 
+			INNER JOIN T_SC_SPGG G ON F.GGID=G.ID
+			WHERE F.ZT=1 AND F.JTIME>NOW() AND F.SJID=#{sjid}
+		)TT ON T.ID=TT.SPID 	
+		
+		 LIMIT #{start},#{limit}
+		 
+   </select>
+   
+    <select id="getShowFloorSelectSpCount" parameterType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean" resultType="int">
+  	  	SELECT COUNT(ID) FROM (
+  	  	SELECT ST.ID SJID,ST.NAME SJMC,SP.ID,SP.NAME,SP.ISST,SP.LOGO FROM T_SC_STORE ST 
+		INNER JOIN T_SC_SPXX SP ON ST.ID=SP.STOREID AND SP.ISSJ=1 AND SP.ISSH=1  AND SP.ISST !=2 AND SP.ZT=0
+		where SP.STOREID=#{sjid}
+		<if test="name != null and name != ''">and SP.`NAME` LIKE '%${name}%'</if>	
+		)T
+		LEFT JOIN (
+			SELECT A.CXID,B.NAME cxName,A.SPID,A.GGID,C.GGBZ,B.KTIME,B.JTIME,B.GZCODE FROM T_YX_MARKETSPMX A 
+			INNER JOIN T_YX_MARKET B ON A.CXID=B.ID
+			INNER JOIN t_sc_spgg C ON A.GGID=C.ID
+			WHERE B.ZT=1 AND B.JTIME>NOW() AND B.SJID=#{sjid} and ISDEFAULT = 0
+		UNION ALL 
+		  SELECT F.ID,F.NAME cxName,F.SPID,F.GGID,G.GGBZ,F.KTIME,F.JTIME,'PINTUAN' FROM T_YX_FGROUPS F 
+			INNER JOIN T_SC_SPGG G ON F.GGID=G.ID
+			WHERE F.ZT=1 AND F.JTIME>NOW() AND F.SJID=#{sjid} and ISDEFAULT = 0
+		)TT ON T.ID=TT.SPID 	
+    </select>
+    
+    <!--复制联版数据-->
+    <insert id="addCopyTheme" parameterType="cn.tc.ulife.platform.server.marketing.model.YxStyleBean" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO T_YX_STYLE(KTIME,JTIME,ACTIVITY_DESC,TYPE,YXID,TABLE_NAME,TABLE_URL,SORT,CTIME,STYPE,LINK_URL,CID,ZT,ISZS,COMID)
+		SELECT KTIME,JTIME,ACTIVITY_DESC,TYPE,YXID,TABLE_NAME,TABLE_URL,SORT,NOW() CTIME,STYPE,LINK_URL,CID,ZT,ISZS,#{xqid} FROM T_YX_STYLE WHERE ID=#{yxid}
+    </insert>
+	
+	<!-- 获取优惠券 -->
+	<select id="getCouponList" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" resultType="cn.tc.ulife.platform.server.marketing.model.CouponBean">
+		SELECT T.ID,T.NAME,T.URL,T.KTIME,T.JTIME,T.SCZS,T.XLZS,
+		T.SYFW,T.XXMS,T.MTIME,T.CTIME,T.JJE,T.MJE,T.ISFB,T.YTYPE,T.YHXZ,T.SJTS,T.HBGZID,T.ISYHQ ,T.ISEARLIER,T.ISENJOY FROM T_YX_YHJ T
+		WHERE 1=1 and T.SJID = #{sjid}
+		<if test="name!=null and name!= '' ">
+			and T.NAME LIKE '%${name}%'
+        </if>
+        <if test="yhxz !=null and yhxz !=''">
+        	and yhxz = #{yhxz} 
+        </if>
+        <if test="yhxz == null or yhxz ==''">
+        	and yhxz != '9'
+        </if>
+		ORDER BY T.CTIME DESC
+		<if test="limit != 0">
+        	limit #{start},#{limit}
+        </if>
+	</select>
+	
+	<!-- 获取优惠券总记录条数 -->
+	<select id="getCouponTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" resultType="int">
+		SELECT COUNT(1) FROM T_YX_YHJ T
+		WHERE 1=1 and T.SJID = #{sjid}
+		<if test="name!=null and name!= '' ">
+			and T.NAME LIKE '%${name}%'
+        </if>
+        <if test="yhxz !=null and yhxz !=''">
+        	and yhxz = #{yhxz} 
+        </if>
+        <if test="yhxz == null or yhxz ==''">
+        	and yhxz != '9'
+        </if>
+	</select>
+	
+	
+	<!-- 新增优惠卷-->
+	<insert id="saveCoupon" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO T_YX_YHJ (NAME,KTIME,JTIME,SCZS,XLZS,XXMS,YTYPE,YHXZ,CID,MJE,JJE,CTIME,SJTS,SJID,ISYHQ,ISENJOY,ISEARLIER
+		<if test="isfb != null and isfb !=''">
+		,isfb
+		</if>
+		)
+		 values(
+		 	#{name,jdbcType=VARCHAR},
+			#{ktime,jdbcType=VARCHAR},
+			#{jtime,jdbcType=VARCHAR},
+			#{sczs,jdbcType=INTEGER},
+			#{xlzs,jdbcType=INTEGER},
+			#{xxms,jdbcType=VARCHAR},
+			#{ytype,jdbcType=VARCHAR},
+			#{yhxz,jdbcType=VARCHAR},
+			#{cid,jdbcType=INTEGER},
+			#{mje,jdbcType=VARCHAR},
+			#{jje,jdbcType=VARCHAR},
+			now(),
+			#{sjts,jdbcType=VARCHAR},
+			#{sjid,jdbcType=VARCHAR},
+			#{isyhq,jdbcType=VARCHAR},
+			#{isenjoy,jdbcType=VARCHAR},
+			#{isearlier,jdbcType=VARCHAR}
+			<if test="isfb != null and isfb !=''">
+				,#{isfb,jdbcType=VARCHAR}
+			</if>
+		)
+	</insert>
+	
+	<!-- 获取促销活动的小区选择 -->
+	<select id="getProCommList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT U.COMID XQID,C.Name,M.ID FROM T_SYS_UOCOM U 
+		INNER JOIN t_community C ON U.COMID=C.CID
+		LEFT JOIN T_YX_MXQXX M ON C.CID=M.XQID AND M.CXID=#{CXID} 
+		<if test="TJLX !=null and TJLX != '' ">
+			AND M.TJLX = #{TJLX}
+        </if>
+		WHERE U.OID=#{uid} and U.RCODE = 'SJGLY'
+		<if test="NAME!=null and NAME!= '' ">
+			AND C.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER BY M.ID DESC
+		<if test="limit != 0">
+        	limit #{start},#{limit}
+        </if>
+	</select>
+	
+	<select id="getProCommListTotal" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT count(1) FROM T_SYS_UOCOM U 
+		INNER JOIN t_community C ON U.COMID=C.CID
+		LEFT JOIN T_YX_MXQXX M ON C.CID=M.XQID AND M.CXID=#{CXID} 
+		<if test="TJLX !=null and TJLX != '' ">
+			AND M.TJLX = #{TJLX}
+        </if>
+		WHERE U.OID=#{uid} and U.RCODE = 'SJGLY'
+		<if test="NAME!=null and NAME!= '' ">
+			AND C.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+	
+	<!-- 促销活动的选择商品 -->
+	<select id="getSpList" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="cn.tc.ulife.platform.server.marketing.model.MspBean">
+		SELECT S.ID,S.NAME,CONCAT(g.GGSZ,g.GGDW) SPGZ,G.SPRICE,G.SPKC MSJG,G.ID SPGZID FROM T_SC_SPXX S
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID 
+		INNER JOIN T_SC_SPGG G ON S.ID=G.SPID 
+		WHERE T.ID = #{storeid}
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid})
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE CONCAT(CONCAT('%',#{NAME}),'%')
+        </if>
+		ORDER BY S.TYPE ASC,S.NAME 
+		LIMIT #{start},#{limit}
+	</select>
+	
+	<!-- 促销活动的选择商品总数 -->
+	<select id="getSpTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="int">
+		SELECT count(1) FROM T_SC_SPXX S
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID 
+		INNER JOIN T_SC_SPGG G ON S.ID=G.SPID 
+		WHERE T.ID = #{storeid}
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid})
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE CONCAT(CONCAT('%',#{NAME}),'%')
+        </if>
+	</select>
+	
+	<!-- 获取优惠券使用详情 -->
+	<select id="getCouponInfo" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponuUserBean" resultType="cn.tc.ulife.platform.server.marketing.model.CouponuUserBean">
+		SELECT UY.UID,U.ACCOUNT,IFNULL(U.`NAME`,U.NICKNAME)NAME,UY.KTIME,UY.JTIME,O.GTIME,UY.SFSY,O.ID,O.ORDERBH,O.UNAME ,C.NAME COMMNAME
+		FROM T_U_USERYHJ UY
+		INNER JOIN T_U_BASEUSER U ON U.ID=UY.UID
+		INNER JOIN t_community C ON U.COMID=C.CID
+		LEFT JOIN T_SC_ORDER O ON UY.ID=O.HDYHJID
+		WHERE UY.YID=#{YID}
+		<if test="SFSY!=null and SFSY!= '' ">
+			and UY.SFSY =#{SFSY}
+        </if>
+        <if test="COMMNAME!=null and COMMNAME!= '' ">
+			and U.COMID =#{COMMNAME}
+        </if>
+        <if test="KTIME!=null and KTIME!= '' ">
+			and O.GTIME>=#{KTIME}
+        </if>
+        
+        <if test="JTIME!=null and JTIME!= '' ">
+			and O.GTIME &lt;=#{JTIME}
+        </if>
+		ORDER BY uy.SFSY ASC ,U.COMID DESC,O.GTIME DESC 
+		LIMIT #{start},#{limit}
+	</select>
+	
+	<!-- 获取优惠券使用详情总记录条数 -->
+	<select id="getCouponInfoTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponuUserBean" resultType="int">
+		SELECT COUNT(1) FROM T_U_USERYHJ UY
+		INNER JOIN T_U_BASEUSER U ON U.ID=UY.UID
+		LEFT JOIN T_SC_ORDER O ON UY.ID=O.HDYHJID
+		WHERE UY.YID=#{YID}
+		<if test="SFSY!=null and SFSY!= '' ">
+			and UY.SFSY =#{SFSY}
+        </if>
+        <if test="KTIME!=null and KTIME!= '' ">
+			and O.GTIME>=#{KTIME}
+        </if>
+        
+        <if test="JTIME!=null and JTIME!= '' ">
+			and O.GTIME &lt;=#{JTIME}
+        </if>
+	</select>
+	
+	 <!--根据地区id和展示层名称获取营销活动楼层展示层列表-->
+	<select id="getShowFloorList" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewBean" resultType="cn.tc.ulife.platform.server.marketing.model.YxViewBean">
+		SELECT V.ID,V.TITLE,V.DETAIL,V.VIEW_LEVEL  viewLevel,V.GROUP_ID  groupId,V.CTIME,V.ZT,V.IS_SHOW isShow,V.HIGHT,V.WITDH width,V.ICON,
+		 LG.GROUP_LOGO groupLogo
+		 FROM `t_yx_view` V 
+		 LEFT JOIN t_yx_locgroup LG ON V.GROUP_ID=LG.ID
+		 WHERE V.COMID=#{xqid}  
+		 <if test="title!=null and title !=''">
+		 	AND V.TITLE LIKE CONCAT(CONCAT('%',#{title}),'%')
+		 </if>
+		 ORDER BY V.CTIME DESC
+		 LIMIT #{start},#{limit} 
+   	</select>	
+	<!--根据地区id和展示层名称获取营销活动楼层展示层列表总数-->
+	<select id="getShowFloorListCount" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewBean" resultType="int">
+	   SELECT count(V.ID)  totalCount
+	   FROM `t_yx_view` V 
+	   LEFT JOIN t_yx_locgroup LG ON V.GROUP_ID=LG.ID
+	   WHERE V.COMID=#{xqid} 
+	 	<if test="title!=null and title !=''">
+		 	AND V.TITLE LIKE CONCAT(CONCAT('%',#{title}),'%')
+		 </if>
+	</select>
+	
+	<!--保存活动楼层-->
+    <insert id="addYxView" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewBean" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO t_yx_view (
+		<if test="title != null and title != ''">TITLE,</if> 		
+		<if test="detail != null and detail != ''">DETAIL,</if>
+		<if test="viewLevel != null and viewLevel != ''"> VIEW_LEVEL,</if>
+		<if test="groupId != null and groupId != ''"> GROUP_ID,</if>
+		<if test="isShow != null and isShow != ''">IS_SHOW,</if>
+		<if test="xqid != null and xqid != ''">COMID,</if>
+		 CID, CTIME, ZT 
+		 ) VALUES (
+		 <if test="title != null and title != ''">#{title,jdbcType=VARCHAR},</if>
+		 <if test="detail != null and detail != ''">#{detail,jdbcType=VARCHAR},</if>
+		 <if test="viewLevel != null and viewLevel != ''">#{viewLevel,jdbcType=VARCHAR},</if>
+		 <if test="groupId != null and groupId != ''">#{groupId},</if>
+		 <if test="isShow != null and isShow != ''">#{isShow},</if>
+		 <if test="xqid != null and xqid != ''">#{xqid},</if>
+		  #{cid},now(),1
+		 )
+    </insert>
+    
+    
+     <!--位置组-->
+    <select id="getSeoFloor" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+       SELECT ID,GROUP_LOGO NAME FROM `t_yx_locgroup`
+    </select>
+    
+     <!--修改 营销活动楼层 -->   
+   <update id="updateYxView" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewBean">
+		update t_yx_view 
+		<set>			
+			<if test="title != null">TITLE=#{title,jdbcType=VARCHAR},</if>
+			<if test="detail != null">DETAIL=#{detail,jdbcType=VARCHAR},</if>
+			<if test="viewLevel != null">VIEW_LEVEL=#{viewLevel},</if>
+			<if test="groupId != null">GROUP_ID=#{groupId},</if>
+			CID=#{cid},			
+			<if test="isShow != null">IS_SHOW=#{isShow},</if>
+			<if test="hight != null">HIGHT=#{hight},</if>
+			<if test="width != null">WITDH=#{width},</if>
+			CTIME=now()		
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<!--复制营销展示层-->
+    <insert id="addCopyView" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewBean" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO T_YX_VIEW (TITLE,DETAIL,VIEW_LEVEL,GROUP_ID,CID,CTIME,ZT,IS_SHOW,ICON,COMID)
+		SELECT V.TITLE,V.DETAIL,V.VIEW_LEVEL,V.GROUP_ID,V.CID,NOW(),V.ZT,V.IS_SHOW,V.ICON,#{xqid} COMID FROM t_yx_view V WHERE V.ID=#{groupId}
+    </insert>
+        <!--复制营销展示层-->
+     <insert id="addCopyViewPos" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewPos" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO T_YX_VIEWPOS(TITLE,ACTIVITY_DESC,VID,GROUP_ID,LOCID,TYPE,KTIME,JTIME,CID,CTIME,ZT,YXID,ISZS,URL,LINK_URL)
+		SELECT TITLE,ACTIVITY_DESC,#{vid},GROUP_ID,LOCID,TYPE,KTIME,JTIME,CID,NOW(),ZT,YXID,ISZS,URL,LINK_URL FROM T_YX_VIEWPOS  WHERE ID=#{cid}
+    </insert>
+	
+	
+	 <!--营销展示层位置信息-->
+   <select id="getShowFloorPlaceList" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewPos" resultType="cn.tc.ulife.platform.server.marketing.model.YxViewPos">
+   	SELECT VP.ID,VP.TITLE,VP.ACTIVITY_DESC  depict,VP.VID,VP.GROUP_ID GROUPID,VP.TYPE,VP.KTIME,
+    VP.JTIME,VP.HIGHT,VP.WITDH WIDTH,VP.CID,VP.CTIME,VP.ZT,VP.YXID,VP.ISZS,VP.URL,VP.LINK_URL linkUrl,T.LOCATION LOCID,T.ID LOCATION
+    FROM `t_yx_viewpos` VP LEFT JOIN T_YX_LOCATION T ON VP.LOCID=T.ID
+    where VP.VID=#{vid}  
+     <if test="title != null and title != ''">AND VP.TITLE LIKE '%${title}%'</if>	
+     ORDER BY VP.CTIME DESC ,VP.ZT    
+     LIMIT #{start},#{limit}	
+   </select>
+   
+   <select id="getShowFloorPlaceCount" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewPos" resultType="int">  	
+     SELECT count(VP.ID)  totalCount
+     FROM `t_yx_viewpos` VP where VP.VID=#{vid} 
+     <if test="title != null and title != ''">AND VP.TITLE LIKE '%${title}%'</if>	 
+   </select>
+   
+   
+    <!--添加  营销展示层位置信息-->
+    <insert id="addYxViewPos" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewPos" useGeneratedKeys="true" keyProperty="id">		
+		INSERT INTO t_yx_viewpos (
+		<if test="title != null and title != ''">TITLE,</if>
+		<if test="depict != null and depict != ''">ACTIVITY_DESC,</if>
+		<if test="vid != null and vid != ''">VID,</if>
+		<if test="groupId != null and groupId != ''">GROUP_ID,</if>
+		<if test="locid != null and locid != ''">LOCID,</if>
+		<if test="type != null and type != ''">TYPE,</if>
+		<if test="ktime != null and ktime != ''">KTIME,</if>
+		<if test="jtime != null and jtime != ''">JTIME,</if>
+		<if test="hight != null and hight != ''">HIGHT,</if>
+		<if test="width != null and width != ''">WITDH,</if>
+		<if test="cid != null and cid != ''">CID,</if>
+		ZT,
+		<if test="yxid != null and yxid != ''">YXID,</if>
+		<if test="iszs != null and iszs != ''">ISZS,</if>
+		<if test="linkUrl != null and linkUrl != ''">LINK_URL,</if> 	
+		<if test="url != null and url != ''">URL,</if> 	
+		CTIME		
+		 ) VALUES (
+		 <if test="title != null and title != ''">#{title,jdbcType=VARCHAR},</if>
+		 <if test="depict != null and depict != ''">#{depict,jdbcType=VARCHAR},</if>
+		 <if test="vid != null and vid != ''">#{vid},</if>
+		 <if test="groupId != null and groupId != ''">#{groupId},</if>
+		 <if test="locid != null and locid != ''">#{locid},</if>
+		 <if test="type != null and type != ''">#{type},</if>
+		 <if test="ktime != null and ktime != ''">#{ktime},</if>
+         <if test="jtime != null and jtime != ''">#{jtime},</if>
+         <if test="hight != null and hight != ''">#{hight},</if>
+         <if test="width != null and width != ''">#{width},</if>
+         <if test="cid != null and cid != ''">#{cid},</if>
+            1,
+         <if test="yxid != null and yxid != ''">#{yxid,jdbcType=VARCHAR},</if>
+         <if test="iszs != null and iszs != ''">#{iszs,jdbcType=VARCHAR},</if>
+         <if test="linkUrl != null and linkUrl != ''">#{linkUrl,jdbcType=VARCHAR},</if>
+         <if test="url != null and url != ''">#{url},</if> 	
+         now()
+		 )
+    </insert>
+    
+    <!--修改  营销展示层位置信息-->
+    <update id="updateYxViewPos" parameterType="cn.tc.ulife.platform.server.marketing.model.YxViewPos">
+     	UPDATE t_yx_viewpos SET 
+     	<if test="title != null">TITLE=#{title,jdbcType=VARCHAR},</if>
+     	<if test="depict != null">ACTIVITY_DESC=#{depict,jdbcType=VARCHAR},</if>
+     	<if test="ktime != null">KTIME=#{ktime},</if>
+     	<if test="jtime != null">JTIME=#{jtime},</if>
+     	<if test="yxid != null">YXID=#{yxid,jdbcType=VARCHAR},</if>
+     	<if test="iszs != null">ISZS=#{iszs,jdbcType=VARCHAR},</if>
+     	<if test="linkUrl != null">LINK_URL=#{linkUrl,jdbcType=VARCHAR},</if>    	
+     	 CID=#{cid}
+     	 WHERE ID=#{id}
+    </update>
+    
+    
+    <!--代理商下的有效优惠券-->
+	<select id="getCouponDlsList" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" resultType="cn.tc.ulife.platform.server.marketing.model.CouponBean">
+	 SELECT t.CID,t.SJID, T.ID,T.NAME,T.URL,T.KTIME,T.JTIME,T.SCZS,T.XLZS,
+     T.SYFW,T.XXMS,T.MTIME,T.CTIME,T.JJE,T.MJE,T.ISFB,T.YTYPE,T.YHXZ,T.SJTS,T.HBGZID,T.ISYHQ,S.`NAME` sjname
+     FROM T_YX_YHJ T LEFT JOIN  t_sc_store S ON T.SJID=S.ID  
+     where  t.ISFB=0 AND (NOW() BETWEEN  T.KTIME and T.JTIME)   
+     and (t.CID in ( SELECT S.ID  from `t_sc_store` S  WHERE s.CID=#{cid}  AND S.ZT=0 ) OR t.CID=#{cid})
+     <if test="name!=null and name!= '' ">
+			and  T.NAME LIKE '%${name}%'
+     </if>   
+     ORDER BY T.CTIME DESC	
+     LIMIT #{start},#{limit}
+	</select>
+	<!--代理商下的有效优惠券总数-->
+	<select id="getCouponDlsTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" resultType="int">
+    	SELECT COUNT(1) FROM T_YX_YHJ T LEFT JOIN  t_sc_store S ON T.SJID=S.ID 
+     where  t.ISFB=0 AND (NOW() BETWEEN  T.KTIME and T.JTIME)   
+     and (t.CID in ( SELECT S.ID from `t_sc_store` S  WHERE s.CID=#{cid}  AND S.ZT=0 ) OR t.CID=#{cid})
+     <if test="name!=null and name!= '' ">
+			and  T.NAME LIKE '%${name}%'
+     </if>   
+     ORDER BY T.CTIME DESC				
+	</select>
+	
+	
+	<!--营销展示层位置信息   选中的商品-->
+   <select id="getShowPlaceSelectedSp" parameterType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean" resultType="cn.tc.ulife.platform.server.marketing.model.SelectShopBean">
+    SELECT SP.ID,SP.`NAME`  FROM 
+    (select V.ID,V.TITLE,C.SID  from t_yx_viewpos V  LEFT JOIN t_yx_comdity  C ON V.ID=C.COMDITY_ID WHERE C.CTYPE=1 and V.ID=#{id}) T
+    LEFT JOIN t_sc_spxx SP ON T.SID=SP.ID 
+   </select>
+   <!--营销展示层位置信息   选中的优惠券-->
+   <select id="getShowPlaceSelectedYhj" parameterType="cn.tc.ulife.platform.server.marketing.model.CouponBean" resultType="cn.tc.ulife.platform.server.marketing.model.CouponBean">
+		SELECT T.ID,T.NAME,T.KTIME,T.JTIME,T.SCZS,T.XLZS,T.XXMS,T.JJE,T.MJE,T.YTYPE,S.`NAME` SJNAME
+        FROM t_yx_comdity C LEFT JOIN   T_YX_YHJ T ON C.SID=T.ID
+        LEFT JOIN t_sc_store S ON T.SJID=S.ID
+		WHERE C.COMDITY_ID=#{id} AND C.CTYPE=1 
+   </select>
+   
+    <!--楼层位置-->
+    <select id="getSeoFloorPlace" parameterType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean" resultType="cn.tc.ulife.platform.server.marketing.model.ComCodeBean">
+	  SELECT  ID,LOCATION  NAME  FROM `t_yx_location` where GROUPID=#{id}	
+    </select>
+    
+    
+    <!-- 获取商品促销列表 -->
+	<select id="getGoodsProList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT T.ID, T.NAME,T.GZCODE,T.GZID,T.KTIME,T.JTIME,
+		T.TYPE,T.ZHIJE,T.ZHIKL,T.MANJE,T.JIANJE,T.MANGJS,T.XGSL,T.CTIME,T.ISMTXG,
+		(SELECT MAX(F.URL) FROM T_YX_FILE F WHERE F.TID=T.ID AND F.TNAME='T_YX_MARKET' ORDER BY F.CTIME DESC ) PSY,
+		T.MEMTYPE,T.MTIME,T.MIAOS,T.ZT,T.TCJG,T.TCSPJS FROM T_YX_MARKET T WHERE 1=1
+		<if test="GZCODE!=null and GZCODE!=''">
+			and	T.GZCODE =#{GZCODE}
+		</if>
+		and T.SJID = #{SJID}
+		<if test="NAME!=null and NAME!= '' ">
+			AND T.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER BY T.CTIME DESC
+		LIMIT #{start},#{limit}
+	</select>
+	
+	<!-- 获取商品促销列表总条数 -->
+	<select id="getGoodsProTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT COUNT(T.ID) totalCount FROM T_YX_MARKET T WHERE 1=1
+		<if test="GZCODE!=null and GZCODE!=''">
+			and	T.GZCODE =#{GZCODE}
+		</if>
+		and T.SJID = #{SJID}
+		<if test="NAME!=null and NAME!= '' ">
+			AND T.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+	
+	<!-- 新增商品促销-->
+	<insert id="saveGoodsPro" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" useGeneratedKeys="true" keyProperty="ID">
+		INSERT INTO T_YX_MARKET(NAME,GZCODE,GZID,KTIME,JTIME,TYPE,MIAOS,CID,SJID,CTIME,MANJE,JIANJE,MEMTYPE)
+		 values(
+		 	#{NAME,jdbcType=VARCHAR},
+		 	#{GZCODE,jdbcType=VARCHAR},
+		 	(SELECT ID FROM t_yx_marketgz  WHERE CODE=#{GZCODE}),
+			#{KTIME,jdbcType=VARCHAR},
+			#{JTIME,jdbcType=VARCHAR},
+			#{TYPE,jdbcType=VARCHAR},
+			#{MIAOS,jdbcType=VARCHAR},
+			#{CID,jdbcType=INTEGER},
+			#{SJID,jdbcType=INTEGER},
+			now(),
+			#{MANJE,jdbcType=VARCHAR},
+			#{JIANJE,jdbcType=VARCHAR},
+			#{MEMTYPE,jdbcType=VARCHAR}
+		)
+	</insert>
+    
+    <!-- 发布前判断当前商品是否已经在已发布的活动中 -->
+	<select id="getIsRepeat" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT count(1) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id
+		WHERE t.id = #{storeid} AND x.iszt=0
+		AND CONCAT(x.spid,x.ggid) in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid});
+	</select>
+	
+	
+	
+		<!-- 获取商品促销商品选择 -->
+	<select id="getProGoodsList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT S.ID,S.NAME,S.TYPE,M.ID FZID,S.ISST,S.LOGO,IFNULL(M.MSJG,G.SPRICE) MSJG,
+		CASE WHEN M.ID IS NULL THEN G.SPKC ELSE M.HDSL END HDSL,G.ID GZID,
+		CASE WHEN S.ISST='4' THEN concat('配送',G.PSCS,'次',G.GGBZ) ELSE CONCAT(g.GGSZ,g.GGDW) END GZCODE
+		FROM T_SC_SPXX S 
+		LEFT JOIN T_SC_SPGG G ON S.ID=G.SPID
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID
+		LEFT JOIN T_YX_MARKETSPMX M ON S.ID=M.SPID AND M.GGID=G.ID AND M.CXID=#{CXID} <if test="TYPE!=null and TYPE !=''"> AND ISZT = 0</if>
+		WHERE 1=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		AND T.ID=#{storeid} 
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER BY M.ID DESC,S.TYPE ASC,S.NAME 
+		LIMIT #{start},#{limit}
+	</select>
+    
+    
+    <!-- 获取商品促销商品选择总记录条数 -->
+	<select id="getProGoodsTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT COUNT(1) FROM T_SC_SPXX S 
+		LEFT JOIN T_SC_SPGG G ON S.ID=G.SPID
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID
+		LEFT JOIN T_YX_MARKETSPMX M ON S.ID=M.SPID AND M.GGID=G.ID AND M.CXID=#{CXID}
+		WHERE 1=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		AND T.ID=#{storeid} 
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+    
+    <!-- 新增商品促销-->
+	<insert id="saveTuangou" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" useGeneratedKeys="true" keyProperty="ID">
+		INSERT INTO T_YX_MARKET(
+		<if test="XGSL != null and XGSL != ''">XGSL,</if>
+		<if test="TCJG != null and TCJG != ''">TCJG,</if>
+		<if test="TCSPJS != null and TCSPJS != ''">TCSPJS,</if>
+		<if test="ISMTXG != null and ISMTXG != ''">ISMTXG,</if>
+		NAME,GZCODE,GZID,KTIME,JTIME,TYPE,MIAOS,CID,SJID,CTIME,MEMTYPE)
+		 values(
+		 <if test="XGSL != null and XGSL != ''">#{XGSL,jdbcType=INTEGER},</if>
+		  <if test="TCJG != null and TCJG != ''">#{TCJG,jdbcType=VARCHAR},</if>
+		   <if test="TCSPJS != null and TCSPJS != ''">#{TCSPJS,jdbcType=INTEGER},</if>
+		   <if test="ISMTXG != null and ISMTXG != ''">#{ISMTXG,jdbcType=VARCHAR},</if>
+		 	#{NAME,jdbcType=VARCHAR},
+		 	#{GZCODE,jdbcType=VARCHAR},
+		 	(SELECT ID FROM t_yx_marketgz  WHERE CODE=#{GZCODE}),
+			#{KTIME,jdbcType=VARCHAR},
+			#{JTIME,jdbcType=VARCHAR},
+			#{TYPE,jdbcType=VARCHAR},
+			#{MIAOS,jdbcType=VARCHAR},
+			#{CID,jdbcType=INTEGER},
+			#{SJID,jdbcType=INTEGER},
+			now(),
+			#{MEMTYPE,jdbcType=VARCHAR}
+		)
+	</insert>
+    
+    <!-- 获取买赠促销列表 -->
+	<select id="getGoodsMzList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT T.ID, T.NAME,T.GZCODE,T.KTIME,T.JTIME,T.ID CXID,
+		T.TYPE,T.CTIME,(SELECT MAX(F.URL) FROM T_YX_FILE F WHERE F.TID=T.ID AND F.TNAME='T_YX_MARKET' ORDER BY F.CTIME DESC ) PSY,
+		T.MEMTYPE,T.MTIME,T.MIAOS,T.ZT,S.NAME spname,s.id SPID,CONCAT(G.GGSZ,G.GGDW) GGDW,G.ID SPGZID,
+		M.MSJG,M.HDSL
+		FROM T_YX_MARKET T LEFT JOIN T_YX_MARKETSPMX M ON t.ID=m.CXID AND m.ISZT = 0
+		LEFT JOIN T_SC_SPXX S ON S.ID=M.SPID
+		LEFT JOIN T_SC_SPGG G ON M.GGID=G.ID where 1=1
+		<if test="GZCODE!=null and GZCODE!=''">
+			and	T.GZCODE =#{GZCODE}
+		</if>
+		AND T.SJID= #{SJID}
+		<if test="NAME!=null and NAME!= '' ">
+			AND T.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER BY T.CTIME DESC
+		LIMIT #{start},#{limit}
+	</select>
+	
+	<!-- 获取买赠促销列表总数 -->
+	<select id="getGoodsMzListCount" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT COUNT(T.ID) totalCount FROM T_YX_MARKET T WHERE T.GZCODE =#{GZCODE}
+		<if test="GZCODE!=null and GZCODE!=''">
+			and	T.GZCODE =#{GZCODE}
+		</if>
+		AND T.SJID= #{SJID}
+		<if test="NAME!=null and NAME!= '' ">
+			AND T.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+    
+    <select id="getMzGoodsList" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT S.ID,S.NAME,S.TYPE,S.ISST,S.LOGO,G.SPRICE MSJG,
+		G.SPKC HDSL,G.ID GZID,
+		CASE WHEN S.ISST='4' THEN concat('配送',G.PSCS,'次',G.GGBZ) ELSE CONCAT(g.GGSZ,g.GGDW) END GZCODE
+		FROM T_SC_SPXX S 
+		LEFT JOIN T_SC_SPGG G ON S.ID=G.SPID
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID
+		WHERE 1=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		AND T.ID=#{storeid} 
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER by S.TYPE ASC,S.NAME 
+		LIMIT #{start},#{limit}
+	</select>
+	
+    <select id="getMzGoodsListTotal" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="int">
+		SELECT count(1)
+		FROM T_SC_SPXX S 
+		LEFT JOIN T_SC_SPGG G ON S.ID=G.SPID
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID
+		WHERE 1=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		AND T.ID=#{storeid} 
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+    
+    
+    <!-- 获取买赠商品选择 -->
+	<!-- <select id="getMzGoods" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="cn.tc.ulife.platform.server.marketing.model.MspBean">
+		SELECT S.ID,S.NAME,M.ID FZID,CONCAT(g.GGSZ,g.GGDW) SPGZ,G.SPRICE,G.SPKC MSJG,G.ID SPGZID FROM T_SC_SPXX S
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID 
+		INNER JOIN T_SC_SPGG G ON S.ID=G.SPID 
+		LEFT JOIN T_YX_MARKETSPMX M ON S.ID=M.SPID AND M.GGID=G.ID AND M.CXID=#{CXID}
+		WHERE T.ID = #{storeid}
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+		ORDER BY S.TYPE ASC,S.NAME 
+		LIMIT #{start},#{limit}
+	</select> -->
+	
+	<!-- 获取买赠商品选择 总记录 -->
+	<select id="getMzGoodsTotalCount" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="int">
+		SELECT count(1) FROM T_SC_SPXX S
+		INNER JOIN T_SC_STORE T ON S.STOREID=T.ID 
+		INNER JOIN T_SC_SPGG G ON S.ID=G.SPID
+		WHERE T.ID = #{storeid}
+		AND S.ISSJ=1 AND S.ZT=0 AND S.ISSH=1
+		AND CONCAT(S.id,g.ID) not in (SELECT CONCAT(x.SPID,x.ggid) FROM T_YX_MARKET t INNER JOIN T_YX_MARKETSPMX x ON x.cxid = t.id AND t.zt=1 and x.iszt=0 AND t.jtime > now() AND T.SJID=#{storeid} and t.ID != #{CXID})
+		<if test="NAME!=null and NAME!= '' ">
+			AND S.NAME LIKE '%${NAME}%'
+        </if>
+	</select>
+    
+    <!-- 新增买赠活动-->
+	<insert id="saveMz" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" useGeneratedKeys="true" keyProperty="ID">
+		INSERT INTO T_YX_MARKET(
+		<if test="XGSL != null and XGSL != ''">XGSL,</if>
+		<if test="TCJG != null and TCJG != ''">TCJG,</if>
+		<if test="TCSPJS != null and TCSPJS != ''">TCSPJS,</if>
+		<if test="ISMTXG != null and ISMTXG != ''">ISMTXG,</if>
+		<if test="GZCODE != null and GZCODE != ''">GZCODE,</if>
+		NAME,KTIME,JTIME,MIAOS,CID,SJID,CTIME,MEMTYPE)
+		 values(
+		 <if test="XGSL != null and XGSL != ''">#{XGSL,jdbcType=INTEGER},</if>
+		  <if test="TCJG != null and TCJG != ''">#{TCJG,jdbcType=VARCHAR},</if>
+		   <if test="TCSPJS != null and TCSPJS != ''">#{TCSPJS,jdbcType=INTEGER},</if>
+		   <if test="ISMTXG != null and ISMTXG != ''">#{ISMTXG,jdbcType=VARCHAR},</if>
+		   <if test="GZCODE != null and GZCODE != ''">#{GZCODE,jdbcType=VARCHAR},</if>
+		 	#{NAME,jdbcType=VARCHAR},
+			#{KTIME,jdbcType=VARCHAR},
+			#{JTIME,jdbcType=VARCHAR},
+			#{MIAOS,jdbcType=VARCHAR},
+			#{CID,jdbcType=INTEGER},
+			#{SJID,jdbcType=INTEGER},
+			now(),
+			#{MEMTYPE,jdbcType=VARCHAR}
+		)
+	</insert>
+    
+    <!-- 获取已绑定买赠活动的优惠券 -->
+	<select id="getMzBandingYhqs" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="cn.tc.ulife.platform.server.marketing.model.MspBean">
+		SELECT j.ID,j.`NAME`,j.YTYPE SPGZ,j.YTYPE SPGZID,x.HDSL MSJG,x.SPID MSPID,x.CXID
+		FROM `t_yx_marketspmx` x 
+		INNER JOIN T_YX_YHJ j ON x.SPID = j.ID and x.ggid=j.YTYPE
+		WHERE x.CXID = #{CXID} and x.iszt = 2
+		ORDER BY j.`NAME`;
+	</select>
+	
+	<!-- 获取已绑定买赠活动的赠品 -->
+	<select id="getMzBandingGoods" parameterType="cn.tc.ulife.platform.server.marketing.model.MspBean" resultType="cn.tc.ulife.platform.server.marketing.model.MspBean">
+		SELECT DISTINCT S.ID,S.NAME,CONCAT(g.GGSZ,g.GGDW) SPGZ,G.SPRICE,x.HDSL MSJG,G.ID SPGZID,x.SPID MSPID,x.CXID
+		FROM T_SC_SPXX S 
+		INNER JOIN T_SC_SPGG G ON S.ID=G.SPID 
+		INNER JOIN `t_yx_marketspmx` x ON x.SPID=s.ID AND x.GGID = G.ID
+		WHERE x.CXID = #{CXID} and x.iszt = 1
+		ORDER BY s.`NAME`
+	</select>
+    
+    <!-- 查看促销详情-小区信息-->
+	<select id="getViewProComm" parameterType="cn.tc.ulife.platform.server.marketing.model.MarketBean" resultType="cn.tc.ulife.platform.server.marketing.model.MarketBean">
+		SELECT  M.XQID,C.Name FROM T_YX_MXQXX M 
+		INNER JOIN t_community C ON M.XQID=C.CID
+		WHERE M.CXID=#{ID}
+		ORDER BY C.Name DESC
+	</select>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+	
+</mapper>

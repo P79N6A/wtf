@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.RkeAdDataDao">
+
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.RkeAdDataEntity" >
+            <id jdbcType="VARCHAR" column="ADD_ID" property="addId" />
+            <result jdbcType="VARCHAR" column="ADD_NAME" property="addname" />
+            <result jdbcType="VARCHAR" column="ADD_PATH" property="addpath" />
+            <result jdbcType="VARCHAR" column="ADD_FILESIZE" property="addfileSize" />
+            <result jdbcType="VARCHAR" column="ADD_TYPE" property="addtype" />
+            <result jdbcType="VARCHAR" column="ADD_LASTLOGINNAME" property="addlastLoginName" />
+            <result jdbcType="VARCHAR" column="ADD_LASTEDITDATE" property="addlastEditDate" />
+            <result jdbcType="VARCHAR" column="ADD_LASTLOGINIP" property="addlastLoginIp" />
+            <result jdbcType="VARCHAR" column="CREATER" property="creater" />
+            <result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ADD_NAME, ADD_PATH, ADD_FILESIZE, ADD_TYPE, ADD_LASTLOGINNAME, ADD_LASTEDITDATE, ADD_LASTLOGINIP, CREATER, ACCOUNTSID
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.RkeAdDataEntity">
+        insert into T_RKE_AD_DATA
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="addname != null">ADD_NAME,</if>
+                <if test="addpath != null">ADD_PATH,</if>
+                <if test="addfileSize != null">ADD_FILESIZE,</if>
+                <if test="addtype != null">ADD_TYPE,</if>
+                <if test="addlastLoginName != null">ADD_LASTLOGINNAME,</if>
+                <if test="addlastEditDate != null">ADD_LASTEDITDATE,</if>
+                <if test="addlastLoginIp != null">ADD_LASTLOGINIP,</if>
+                <if test="creater != null">CREATER,</if>
+                <if test="accountSid != null">ACCOUNTSID</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="addname != null">#{addname, jdbcType=VARCHAR},</if>
+                <if test="addpath != null">#{addpath, jdbcType=VARCHAR},</if>
+                <if test="addfileSize != null">#{addfileSize, jdbcType=INTEGER},</if>
+                <if test="addtype != null">#{addtype, jdbcType=INTEGER},</if>
+                <if test="addlastLoginName != null">#{addlastLoginName, jdbcType=VARCHAR},</if>
+                <if test="addlastEditDate != null">#{addlastEditDate, jdbcType=TIMESTAMP},</if>
+                <if test="addlastLoginIp != null">#{addlastLoginIp, jdbcType=VARCHAR},</if>
+                <if test="creater != null">#{creater, jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">#{accountSid, jdbcType=VARCHAR}</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        delete from T_RKE_AD_DATA
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="update" parameterType="cn.tc.ulife.platform.door.mode.RkeAdDataEntity">
+        update T_RKE_AD_DATA
+        <set>
+                <if test="addname != null">and ADD_NAME =  #{addname,jdbcType=VARCHAR},</if>
+                <if test="addpath != null">and ADD_PATH =  #{addpath,jdbcType=VARCHAR},</if>
+                <if test="addfileSize != null">and ADD_FILESIZE =  #{addfileSize,jdbcType=INTEGER},</if>
+                <if test="addtype != null">and ADD_TYPE =  #{addtype,jdbcType=INTEGER},</if>
+                <if test="addlastLoginName != null">and ADD_LASTLOGINNAME =  #{addlastLoginName,jdbcType=VARCHAR},</if>
+                <if test="addlastEditDate != null">and ADD_LASTEDITDATE =  #{addlastEditDate,jdbcType=TIMESTAMP},</if>
+                <if test="addlastLoginIp != null">and ADD_LASTLOGINIP =  #{addlastLoginIp,jdbcType=VARCHAR},</if>
+                <if test="creater != null">and CREATER =  #{creater,jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">and ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR}</if>
+        </set>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_DATA
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_DATA
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+    <select id="getCount" resultType="Integer" parameterType="map" >
+        select
+        count(id)
+        from T_RKE_AD_DATA
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+</mapper>

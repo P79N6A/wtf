@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.user.dao.AgentEntityMapper">
+    <resultMap id="BaseAgentResultMap" type="cn.tc.ulife.platform.server.user.model.AgentEntity">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="TEL" property="tel" jdbcType="VARCHAR"/>
+        <result column="RESPONSIBLEID " property="responsibleId" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="JKKD" property="jkkd" jdbcType="VARCHAR"/>
+        <result column="SKZH" property="skzh" jdbcType="VARCHAR"/>
+        <result column="JKPL" property="jkpl" jdbcType="VARCHAR"/>
+        <result column="REMARK" property="remark" jdbcType="VARCHAR"/>
+        <result column="CTIME" property="ctime" jdbcType="VARCHAR"/>
+        <result column="MTIME" property="mtime" jdbcType="VARCHAR"/>
+        <result column="IMAGE" property="image" jdbcType="VARCHAR"/>
+        <result column="APPINTYPE" property="appintype" jdbcType="VARCHAR"/>
+        <result column="APPNATYPE" property="appnatype" jdbcType="VARCHAR"/>
+        <result column="APPNATYPE" property="appnatype" jdbcType="VARCHAR"/>
+        <result column="RCODE" property="rcode" jdbcType="VARCHAR"/>
+        <result column="COMMNAMES" property="commNames" jdbcType="VARCHAR"/>
+        <result column="ZT" property="zt" jdbcType="VARCHAR"/>
+        <result column="RELATIONACCOUNT" property="relationAccount" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--<resultMap id="AgentResultMap" type="cn.tc.ulife.platform.server.user.model.AgentEntity"
+               extends="BaseAgentResultMap">
+        <association property="totalCount" column="count" select="selectAgentCount"/>
+
+    </resultMap>-->
+    <sql id="Base_Column_List">
+    DLS.ID, DLS.NAME, DLS.ADDRESS, DLS.TEL, DLS.RESPONSIBLEID , DLS.MOBILE, DLS.JKKD, DLS.SKZH, DLS.JKPL, DLS.REMARK, DLS.CTIME, DLS.MTIME,
+    DLS.IMAGE, DLS.APPINTYPE, DLS.APPNATYPE,DLS.ZT
+  </sql>
+
+
+    <select id="selectAgentByPrimaryKey" resultMap="BaseAgentResultMap" parameterType="String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM T_SYS_DLS DLS
+        WHERE DLS.ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="String">
+     DELETE
+     FROM T_SYS_DLS
+     WHERE ID = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertAgent" parameterType="cn.tc.ulife.platform.server.user.model.AgentEntity">
+  INSERT INTO T_SYS_DLS (ID, NAME, ADDRESS,TEL, RESPONSIBLEID, MOBILE,JKKD, SKZH, JKPL, REMARK,CTIME, MTIME, IMAGE,APPINTYPE, APPNATYPE)
+  VALUES (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+  #{tel,jdbcType=VARCHAR}, #{responsibleId,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+ #{jkkd,jdbcType=VARCHAR}, #{skzh,jdbcType=VARCHAR}, #{jkpl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+ #{ctime,jdbcType=VARCHAR}, #{mtime,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+ #{appintype,jdbcType=VARCHAR}, #{appnatype,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateAgentByPrimaryKey" parameterType="cn.tc.ulife.platform.server.user.model.AgentEntity">
+        UPDATE T_SYS_DLS
+        <set>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                TEL = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="responsibleId != null">
+                RESPONSIBLEID = #{responsibleId,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                MOBILE = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="jkkd != null">
+                JKKD = #{jkkd,jdbcType=VARCHAR},
+            </if>
+            <if test="skzh != null">
+                SKZH = #{skzh,jdbcType=VARCHAR},
+            </if>
+            <if test="jkpl != null">
+                JKPL = #{jkpl,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="ctime != null">
+                CTIME = #{ctime,jdbcType=VARCHAR},
+            </if>
+
+            <if test="image != null">
+                IMAGE = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="appintype != null">
+                APPINTYPE = #{appintype,jdbcType=VARCHAR},
+            </if>
+            <if test="appnatype != null">
+                APPNATYPE = #{appnatype,jdbcType=VARCHAR},
+            </if>
+            <if test="zt != null">
+                ZT = #{zt,jdbcType=VARCHAR},
+            </if>
+        </set>
+        ,MTIME = NOW()
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="selectAgentList" resultMap="BaseAgentResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>,"DLS" AS RCODE,BU.ACCOUNT AS RELATIONACCOUNT,
+        GROUP_CONCAT(TCOM.NAME) AS COMMNAMES
+        FROM T_SYS_DLS DLS
+        INNER JOIN T_SYS_USERENTITY UE ON DLS.ID=UE.OID AND UE.RCODE="DLS"
+        INNER JOIN T_U_BASEUSER BU ON UE.UID=BU.ID
+        LEFT JOIN T_SYS_UOCOM UO ON DLS.ID= UO.OID AND UO.RCODE="DLS"
+        LEFT JOIN T_COMMUNITY TCOM ON TCOM.CID=UO.COMID
+
+        <!--<where>
+            <if test="search!=null and search!=''">
+                DLS.NAME LIKE "%NAME% OR "
+            </if>
+        </where>-->
+        GROUP BY DLS.ID
+        LIMIT #{ofset},#{psize};
+
+    </select>
+
+
+    <select id="selectAgentCount" resultType="int">
+        SELECT COUNT(*) FROM T_SYS_DLS
+    </select>
+
+    <update id="updateEntityRelationAccountStatus" parameterType="map">
+      UPDATE T_U_BASEUSER  BA
+	  INNER JOIN  T_SYS_USERENTITY UE ON BA.ID =UE.UID AND UE.RCODE=#{rcode}
+	  SET BA.ZT =#{status}
+	  WHERE UE.OID=#{entityId}  AND UE.RCODE="DLS"
+    </update>
+
+    <select id="checkAgentNameUnique" parameterType="map" resultType="int">
+      SELECT COUNT(*) FROM T_SYS_DLS DLS WHERE DLS.NAME=#{name} AND DLS.ID NOT IN (#{id})
+    </select>
+</mapper>

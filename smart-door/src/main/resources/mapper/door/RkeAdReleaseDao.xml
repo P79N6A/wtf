@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.RkeAdReleaseDao">
+
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.RkeAdReleaseEntity" >
+            <id jdbcType="VARCHAR" column="ADR_ID" property="adrId" />
+            <result jdbcType="VARCHAR" column="ADR_ADLID" property="adrAdlid" />
+            <result jdbcType="VARCHAR" column="ADR_ADDID" property="adrAddid" />
+            <result jdbcType="VARCHAR" column="ADR_COID" property="adrCoid" />
+            <result jdbcType="VARCHAR" column="ADR_ADDDATE" property="adraddDate" />
+            <result jdbcType="INTEGER" column="ADR_LINK" property="adrlink" />
+            <result jdbcType="VARCHAR" column="ADR_SORTNO" property="adrsortNo" />
+            <result jdbcType="TIMESTAMP" column="ADR_STATE" property="adrstate" />
+            <result jdbcType="VARCHAR" column="ADR_LASTLOGINNAME" property="adrlastLoginName" />
+            <result jdbcType="VARCHAR" column="ADR_LASTLOGINIP" property="adrlastLoginIp" />
+            <result jdbcType="VARCHAR" column="ADR_LASTEDITDATE" property="adrlastEditDate" />
+            <result jdbcType="VARCHAR" column="CREATER" property="creater" />
+            <result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, ADR_ADLID, ADR_ADDID, ADR_COID, ADR_ADDDATE, ADR_LINK, ADR_SORTNO, ADR_STATE, ADR_LASTLOGINNAME, ADR_LASTLOGINIP, 
+        ADR_LASTEDITDATE, CREATER, ACCOUNTSID
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.RkeAdReleaseEntity">
+        insert into T_RKE_AD_RELEASE
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="adrAdlid != null">ADR_ADLID,</if>
+                <if test="adrAddid != null">ADR_ADDID,</if>
+                <if test="adrCoid != null">ADR_COID,</if>
+                <if test="adraddDate != null">ADR_ADDDATE,</if>
+                <if test="adrlink != null">ADR_LINK,</if>
+                <if test="adrsortNo != null">ADR_SORTNO,</if>
+                <if test="adrstate != null">ADR_STATE,</if>
+                <if test="adrlastLoginName != null">ADR_LASTLOGINNAME,</if>
+                <if test="adrlastLoginIp != null">ADR_LASTLOGINIP,</if>
+                <if test="adrlastEditDate != null">ADR_LASTEDITDATE,</if>
+                <if test="creater != null">CREATER,</if>
+                <if test="accountSid != null">ACCOUNTSID</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="adrAdlid != null">#{adrAdlid, jdbcType=VARCHAR},</if>
+                <if test="adrAddid != null">#{adrAddid, jdbcType=VARCHAR},</if>
+                <if test="adrCoid != null">#{adrCoid, jdbcType=VARCHAR},</if>
+                <if test="adraddDate != null">#{adraddDate, jdbcType=VARCHAR},</if>
+                <if test="adrlink != null">#{adrlink, jdbcType=INTEGER},</if>
+                <if test="adrsortNo != null">#{adrsortNo, jdbcType=VARCHAR},</if>
+                <if test="adrstate != null">#{adrstate, jdbcType=TIMESTAMP},</if>
+                <if test="adrlastLoginName != null">#{adrlastLoginName, jdbcType=VARCHAR},</if>
+                <if test="adrlastLoginIp != null">#{adrlastLoginIp, jdbcType=VARCHAR},</if>
+                <if test="adrlastEditDate != null">#{adrlastEditDate, jdbcType=VARCHAR},</if>
+                <if test="creater != null">#{creater, jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">#{accountSid, jdbcType=VARCHAR}</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        delete from T_RKE_AD_RELEASE
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="update" parameterType="cn.tc.ulife.platform.door.mode.RkeAdReleaseEntity">
+        update T_RKE_AD_RELEASE
+        <set>
+                <if test="adrAdlid != null">and ADR_ADLID =  #{adrAdlid,jdbcType=VARCHAR},</if>
+                <if test="adrAddid != null">and ADR_ADDID =  #{adrAddid,jdbcType=VARCHAR},</if>
+                <if test="adrCoid != null">and ADR_COID =  #{adrCoid,jdbcType=VARCHAR},</if>
+                <if test="adraddDate != null">and ADR_ADDDATE =  #{adraddDate,jdbcType=VARCHAR},</if>
+                <if test="adrlink != null">and ADR_LINK =  #{adrlink,jdbcType=INTEGER},</if>
+                <if test="adrsortNo != null">and ADR_SORTNO =  #{adrsortNo,jdbcType=VARCHAR},</if>
+                <if test="adrstate != null">and ADR_STATE =  #{adrstate,jdbcType=TIMESTAMP},</if>
+                <if test="adrlastLoginName != null">and ADR_LASTLOGINNAME =  #{adrlastLoginName,jdbcType=VARCHAR},</if>
+                <if test="adrlastLoginIp != null">and ADR_LASTLOGINIP =  #{adrlastLoginIp,jdbcType=VARCHAR},</if>
+                <if test="adrlastEditDate != null">and ADR_LASTEDITDATE =  #{adrlastEditDate,jdbcType=VARCHAR},</if>
+                <if test="creater != null">and CREATER =  #{creater,jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">and ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR}</if>
+        </set>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_RELEASE
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_RELEASE
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+    <select id="getCount" resultType="Integer" parameterType="map" >
+        select
+        count(id)
+        from T_RKE_AD_RELEASE
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+</mapper>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html ng-app="h7_7">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>resource的使用</title>
+    <script type="text/javascript" src="../../js/angular-1.3.0.js"></script>
+    <script type="text/javascript" src="../../js/angular-route.min.js"></script>
+    <script type="text/javascript" src="../../js/angular-resource.js"></script>
+    <style type="text/css">
+        body {
+            font-size: 13px;
+        }
+
+        .show {
+            border: solid 1px;
+            padding: 8px;
+            width: 260px;
+            margin: 10px 0px;
+            background-color: #ccc;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="frame" ng-controller="c7_7">
+    <ul>
+        <li ng-repeat="item in items">
+            <span>{{item.code}}</span>
+            <span>{{item.name}}</span>
+            <span>{{item.sex}}</span>
+        </li>
+    </ul>
+    <div class="show">
+        key值：<input type="text" ng-model="key">
+        <button ng-click="save()">保存</button>
+        <div class="tip">{{result}}</div>
+    </div>
+</div>
+
+</body>
+
+
+<script type="text/javascript">
+
+
+    var h7_7 = angular.module('h7_7', ['ngResource']);
+    h7_7.config(function ($httpProvider) {
+        $httpProvider.defaults.transformRequest = function (obj) {
+            var arrStr = [];
+            for (var p in obj) {
+                arrStr.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+            }
+            return arrStr.join("&");
+        }
+
+    });
+    h7_7.controller('c7_7', function ($scope, $resource) {
+        var stus = $resource("../user/getA");
+        stus.query({
+            action: 'search'
+        }, function (resp) {
+            $scope.items = resp;
+        });
+        stus.save = function () {
+            var data = {key: $scope.key};
+            stus.save({action: 'save'}, data,
+                    function (resp) {
+                        $scope.result = "jja";
+                    }
+            )
+            ;
+        }
+
+    })
+
+</script>
+</html>

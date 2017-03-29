@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.WareDao">
+
+    <!-- 添加商品信息 -->
+    <insert id="addWare" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        insert into
+        t_sc_spxx(
+        SPCODE,NAME,JC,STOREID,LOGO,LOGO3,LOGO2,REMARK,BRAND,ISSJ,ISPTHD,ISHD,ZFFS,ISVIP,
+        ISMYF,ISQTTH,CTIME,MTIME,MIP,MUID,ISTJ,ISBH,ISRS,XH,YJZ,ISYJ,ISSH,CGPML,ZT,ISST,ISPT,
+        CID,PLID,TYPE,PSGZ,SPTM,SPRICE,PSZQ,PSZQDW,SPKC,FWDJ,WYJBL)
+        values(#{spcode},#{name},#{jc},#{storeid},#{logo},#{logo3},#{logo2},#{remark},#{brand},#{issj},
+        #{ispthd},#{ishd},#{zffs},#{isvip},#{ismyf},#{isqtth},now(),now(),#{mip},#{muid},
+        #{istj},#{isbh},#{isrs},#{xh},#{yjz},#{isyj},#{issh},#{cgpml},#{zt},#{isst},#{ispt},#{cid},
+        #{plid},#{type},#{psgz},#{sptm},#{sprice},#{pszq},#{pszqdw},#{spkc},#{fwdj},#{wyjbl})
+    </insert>
+
+    <!-- 删除商品信息 -->
+    <delete id="delWare"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        UPDATE T_SC_SPXX SET zt = '2' WHERE ID = #{id}
+    </delete>
+
+    <delete id="delWareList"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        UPDATE T_SC_SPXX SET zt = '2' WHERE ID IN
+        <foreach collection="list" item="item" index="index" open="("
+                 separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <!-- 修改商品信息 -->
+    <update id="updWare"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        UPDATE T_SC_SPXX
+        <set>
+            <if test="spcode != null and spcode != ''">SPCODE = #{spcode},</if>
+            <if test="name != null and name != ''">NAME = #{name},</if>
+            <if test="jc != null and jc != ''">JC = #{jc},</if>
+            <if test="storeid != null and storeid != ''">STOREID = #{storeid},</if>
+            <if test="logo != null and logo != ''">LOGO = #{logo},</if>
+            <if test="logo3 != null and logo3 != ''">LOGO3 = #{logo3},</if>
+            <if test="logo2 != null and logo2 != ''">LOGO2 = #{logo2},</if>
+            <if test="remark != null and remark != ''">REMARK = #{remark},</if>
+            <if test="brand != null and brand != ''">BRAND = #{brand},</if>
+            <if test="issj != null and issj != ''">ISSJ = #{issj},</if>
+            <if test="ispthd != null and ispthd != ''">ISPTHD = #{ispthd},</if>
+            <if test="ishd != null and ishd != ''">ISHD = #{ishd},</if>
+            <if test="zffs != null and zffs != ''">ZFFS = #{zffs},</if>
+            <if test="isvip != null and isvip != ''">ISVIP = #{isvip},</if>
+            <if test="ismyf != null and ismyf != ''">ISMYF = #{ismyf},</if>
+            <if test="isqtth != null and isqtth != ''">ISQTTH = #{isqtth},</if>
+            <if test="mip != null and mip != ''">MIP = #{mip},</if>
+            <if test="muid != null and muid != ''">MUID = #{muid},</if>
+            <if test="istj != null and istj != ''">ISTJ = #{istj},</if>
+            <if test="isbh != null and isbh != ''">ISBH = #{isbh},</if>
+            <if test="isrs != null and isrs != ''">ISRS = #{isrs},</if>
+            <if test="xh != null and xh != ''">XH = #{xh},</if>
+            <if test="yjz != null and yjz != ''">YJZ = #{yjz},</if>
+            <if test="isyj != null and isyj != ''">ISYJ = #{isyj},</if>
+            <if test="issh != null and issh != ''">ISSH = #{issh},</if>
+            <if test="cgpml != null and cgpml != ''">CGPML = #{cgpml},</if>
+            <if test="zt != null and zt != ''">ZT = #{zt},</if>
+            <if test="isst != null and isst != ''">ISST = #{isst},</if>
+            <if test="ispt != null and ispt != ''">ISPT = #{ispt},</if>
+            <if test="cid != null and cid != ''">CID = #{cid},</if>
+            <if test="plid != null and plid != ''">PLID = #{plid},</if>
+            <if test="type != null and type != ''">TYPE = #{type},</if>
+            <if test="psgz != null and psgz != ''">PSGZ = #{psgz},</if>
+            <if test="sptm != null and sptm != ''">SPTM = #{sptm},</if>
+            <if test="sprice != null and sprice != ''">SPRICE = #{sprice},</if>
+            <if test="pszq != null and pszq != ''">PSZQ = #{pszq},</if>
+            <if test="pszqdw != null and pszqdw != ''">PSZQDW = #{pszqdw},</if>
+            <if test="spkc != null and spkc != ''">SPKC = #{spkc},</if>
+            <if test="fwdj != null and fwdj != ''">FWDJ = #{fwdj},</if>
+            <if test="wyjbl != null and wyjbl != ''">WYJBL = #{wyjbl},</if>
+            MTIME = now()
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 修改商品信息 -->
+    <update id="updWareList"
+            parameterType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        UPDATE T_SC_SPXX SET
+        <foreach collection="list" item="item" index="index" open=""
+                 separator="," close="">
+            <if test="item.name != null">
+                NAME = #{item.name},
+            </if>
+            <if test="item.issj != null">
+                ISSJ = #{item.issj},
+            </if>
+            <if test="item.zt != null">
+                ZT = #{item.zt},
+            </if>
+            <if test="item.issh != null">
+                ISSH = #{item.issh},
+            </if>
+            MTIME = now()
+        </foreach>
+        WHERE ID IN
+        <foreach collection="list" item="item" index="index" open="("
+                 separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 查询商品信息 -->
+    <select id="queryWareEntity" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        SELECT * FROM T_SC_SPXX WHERE ID = #{id}
+    </select>
+
+    <!-- 查询商品信息列表 -->
+    <select id="queryAll" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.shop.entity.WareEntity">
+        SELECT * FROM T_SC_SPXX WHERE 1=1
+        <if test="id != null and id != ''">
+            AND ID in (${id})
+        </if>
+        <if test="storeid != null and storeid != ''">
+            AND STOREID IN (#{storeid})
+        </if>
+        <if test="spxz != null and spxz != ''">
+            AND ISST = #{spxz}
+        </if>
+        <if test="spname != null and spname != ''">
+            AND NAME like '%${spname}%'
+        </if>
+        <if test="sptype != null and sptype != ''">
+            AND TYPE = #{sptype}
+        </if>
+        <if test="issj != null and issj != ''">
+            AND ISSJ = #{issj}
+        </if>
+        <if test="zffs != null and zffs != ''">
+            AND ZFFS = #{zffs}
+        </if>
+        ORDER BY CTIME
+        <if test="ofset != null">
+            LIMIT #{ofset}, #{psize}
+        </if>
+    </select>
+    <select id="countWare" parameterType="map" resultType="String">
+        SELECT COUNT(1) FROM T_SC_SPXX WHERE 1=1
+        <if test="storeId != null and storeId != ''">
+            AND STOREID IN (#{storeId})
+        </if>
+        <if test="spxz != null and spxz != ''">
+            AND ISST = #{spxz}
+        </if>
+        <if test="spname != null and spname != ''">
+            AND NAME like '%${spname}%'
+        </if>
+        <if test="sptype != null and sptype != ''">
+            AND TYPE = #{sptype}
+        </if>
+        <if test="issj != null and issj != ''">
+            AND ISSJ = #{issj}
+        </if>
+        <if test="zffs != null and zffs != ''">
+            AND ZFFS = #{zffs}
+        </if>
+    </select>
+
+    <!-- 批量新增充值商品 -->
+    <insert id="addRechargeList" parameterType="java.util.List">
+        INSERT INTO
+        T_SYS_RECHARGE(PRODID,RECSPRICE,DLSPRICE,FLOATVALUE,SPRICE,PRODISPTYPE,PRODDELAYTIMES,PRODPROVINCEID,PRODTYPE,CTIME,MTIME,CID,ZT)
+        VALUES
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.prodid},#{item.recsprice},#{item.dlsprice},#{item.floatvalue},#{item.sprice},#{item.prodisptype},#{item.proddelaytimes},
+            #{item.prodprovinceid},#{item.prodtype},now(),NULL,#{item.cid},#{item.zt})
+        </foreach>
+    </insert>
+    <!--同步数据日志-->
+    <insert id="addRechargeLogList" parameterType="java.util.List">
+        INSERT INTO T_SYS_RECHARGELOG
+        (PRODID,RECSPRICE,DLSPRICE,FLOATVALUE,SPRICE,PRODISPTYPE,PRODDELAYTIMES,PRODPROVINCEID,PRODTYPE,CTIME)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.prodid},#{item.recsprice},#{item.dlsprice},#{item.floatvalue},#{item.sprice},#{item.prodisptype},#{item.proddelaytimes},
+            #{item.prodprovinceid},#{item.prodtype},now())
+        </foreach>
+    </insert>
+    <!--清空表数据-->
+    <delete id="delRechargeAll">
+        DELETE FROM t_sys_recharge
+    </delete>
+
+    <!--充值商品列表-->
+    <select id="listRecharge" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.RechargeEntity">
+        SELECT
+        ID,RECSPRICE,PRODISPTYPE,PRODDELAYTIMES,PRODPROVINCEID,
+        PRODTYPE,DLSPRICE,FLOATVALUE,SPRICE,CTIME,MTIME,ZT
+        FROM T_SYS_RECHARGE
+        WHERE 1=1
+        <if test="recsprice!=null and recsprice!=''">
+            AND (recsprice = #{recsprice}
+            OR CONCAT_WS('^',PRODISPTYPE,PRODPROVINCEID) LIKE '%${recsprice}%')
+        </if>
+        ORDER BY PRODPROVINCEID desc,PRODTYPE desc,PRODISPTYPE desc,RECSPRICE desc
+        limit #{ofset} , #{psize}
+    </select>
+    <select id="countRecharge" parameterType="map" resultType="String">
+        SELECT COUNT(1) FROM t_sys_recharge
+        WHERE 1=1
+        <if test="recsprice!=null and recsprice!=''">
+            AND (recsprice = #{recsprice}
+            OR CONCAT_WS('^',PRODISPTYPE,PRODPROVINCEID) LIKE '%${recsprice}%')
+        </if>
+    </select>
+
+    <!--获取充值浮动值-->
+    <select id="getRechargeFloat" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.sys.model.SysAllCodeEntity">
+        SELECT
+        CODECODE,CODENAME,CODETYPE,CODEVALUE,CODEDESC,VALIDSTATUS,CTIME
+        FROM `T_SYS_ALLCODE`
+        WHERE VALIDSTATUS='1' AND CODECODE = 'RECHARGEFLOAT' AND CODETYPE = 'RECHARGE';
+    </select>
+    <!--设置充值浮动值-->
+    <update id="updRechargeFloat" parameterType="map">
+        UPDATE `T_SYS_ALLCODE`
+        SET CODEVALUE = #{floatValue}
+        WHERE VALIDSTATUS='1' AND CODECODE = 'RECHARGEFLOAT' AND CODETYPE = 'RECHARGE';
+    </update>
+    <!--保存充值浮动值-->
+    <insert id="addRechargeFloat" parameterType="cn.tc.ulife.platform.server.sys.model.SysAllCodeEntity">
+        INSERT INTO  T_SYS_ALLCODE(CODECODE,CODENAME,CODETYPE,CODEVALUE,CODEDESC,VALIDSTATUS,CTIME)
+        VALUES (#{codeCode},#{codeName},#{codeType},#{codeValue},#{codeDesc},#{validStatus},now())
+    </insert>
+
+    <select id="getRechargeByKey" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.shop.entity.RechargeEntity">
+        SELECT
+        ID,RECSPRICE,PRODISPTYPE,PRODDELAYTIMES,PRODPROVINCEID,
+        PRODTYPE,DLSPRICE,FLOATVALUE,SPRICE,CTIME,MTIME,ZT
+        FROM `T_SYS_RECHARGE`
+        WHERE ID = #{id};
+    </select>
+
+    <update id="updRecharge" parameterType="cn.tc.ulife.platform.server.shop.entity.RechargeEntity">
+        UPDATE `T_SYS_RECHARGE` SET ZT = #{zt} WHERE ID = #{id};
+    </update>
+
+    <select id="listStoreId" parameterType="map"
+            resultType="String">
+        SELECT
+        GROUP_CONCAT(ID)
+        /*ID, NAME, ADDRESS, TEL, ACCOUNT, MOBILE,
+        SJMS, REMARK, SPRICE, FARE, FJF, KTIME, JTIME,
+        ISPS, STRA, DJL, CTIME, MTIME, ISRS, XH,
+        XZ, LOGO, IMAGE, IMAGE2, IMAGE3, IMAGE4,
+        IMAGE5, IMAGE6, ZT, TYPE, ISJF, JFJE, PLINE,
+        ZK, Lat, Lng, ISYHFLAG, CID*/
+        FROM `T_SC_STORE`
+        WHERE 1=1
+        <if test="storeid != null">
+                AND ID = #{storeid}
+        </if>
+        <if test="uid != null">
+            AND CID = #{uid}
+        </if>
+        <if test="spxz != null">
+            AND XZ = #{spxz}
+        </if>
+        <if test="ofset != null">
+        LIMIT #{ofset}, #{psize}
+        </if>
+    </select>
+    <select id="listStore" parameterType="map"
+            resultType="cn.tc.ulife.platform.server.user.model.StoreEntity">
+        SELECT
+        *
+        /*ID, NAME, ADDRESS, TEL, ACCOUNT, MOBILE,
+        SJMS, REMARK, SPRICE, FARE, FJF, KTIME, JTIME,
+        ISPS, STRA, DJL, CTIME, MTIME, ISRS, XH,
+        XZ, LOGO, IMAGE, IMAGE2, IMAGE3, IMAGE4,
+        IMAGE5, IMAGE6, ZT, TYPE, ISJF, JFJE, PLINE,
+        ZK, Lat, Lng, ISYHFLAG, CID*/
+        FROM `T_SC_STORE`
+        <where>
+            <if test="uid != null">
+                AND CID = #{uid}
+            </if>
+            <if test="sjxz != null">
+                AND XZ = #{sjxz}
+            </if>
+        </where>
+        <if test="ofset != null">
+        LIMIT #{ofset}, #{psize}
+        </if>
+    </select>
+    <select id="countStore" parameterType="map" resultType="String">
+        SELECT
+        count(*)
+        FROM `T_SC_STORE`
+        <where>
+            <if test="uid != null">
+                AND CID = #{uid}
+            </if>
+            <if test="sjxz != null">
+                AND XZ = #{sjxz}
+            </if>
+        </where>
+    </select>
+
+    <!--产品线与小区运费信息-->
+    <select id="listPLine" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.model.Plinecom">
+        SELECT UR.COMID,S.ID PSID,S.PID,P.NAME AS lname,
+        C.ID,
+        IFNULL(C.FREIGHT,0) FREIGHT,
+        IFNULL(C.QMJE,0) QMJE,
+        IFNULL(C.ISJF,1) ISJF,
+        IFNULL(C.JF,0) JF,
+        C.CTIME ,
+        C.MTIME
+        FROM T_SYS_PLINEISSUED S
+        INNER JOIN T_SC_PLINECOM C ON C.PSID=S.ID AND C.PID=S.PID AND C.COMID=54
+        INNER JOIN t_sc_productline P ON S.PID=P.ID
+        INNER JOIN t_sys_urcom UR ON S.UID=UR.UID AND UR.RCODE='DLS'
+        WHERE S.UID= 2 AND S.RCODE='DLS' AND UR.COMID=54
+        <if test="pid!=null and pid!=''">
+            AND C.pID=#{pid}
+        </if>
+    </select>
+
+    <select id="getWareType" parameterType="map" resultType="String">
+        SELECT NAME FROM T_SC_SPFL WHERE ID = #{flid}
+    </select>
+    <select id="getWareStore" parameterType="map" resultType="String">
+        SELECT NAME FROM T_SC_STORE WHERE ID = #{sid}
+    </select>
+
+
+    <select id="getStoreIdByUid" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.ScStoreEntity">
+        SELECT st.* FROM T_SC_STORE st
+        INNER JOIN T_SYS_USERENTITY ue ON ue.OID = st.ID
+        WHERE ue.UID = #{uid}
+    </select>
+
+    <select id="listAgentCom" parameterType="map" resultType="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+        SELECT com.CID AS ID, com.NAME FROM T_COMMUNITY com
+        INNER JOIN T_SYS_UOCOM uo ON uo.COMID = com.CID
+        INNER JOIN t_sys_userentity ue ON ue.OID = uo.OID
+        WHERE ue.UID = #{uid} AND ue.RCODE = #{rcode}
+    </select>
+
+    <select id="getAgentIdByUid" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.ScAgentEntity">
+        SELECT st.* FROM T_SYS_DLS st
+        INNER JOIN T_SYS_USERENTITY ue ON ue.OID = st.ID
+        WHERE ue.UID = #{uid}
+    </select>
+</mapper>

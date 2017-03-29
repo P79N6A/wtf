@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.authorization.dao.SysUserRootMapper">
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.server.authorization.model.UserMenuFront">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="UID" property="uid" jdbcType="VARCHAR"/>
+        <result column="RID" property="rid" jdbcType="VARCHAR"/>
+        <result column="RCODE" property="rcode" jdbcType="VARCHAR"/>
+        <result column="CID" property="cid" jdbcType="VARCHAR"/>
+        <result column="CTIME" property="ctime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, UID, RID, RCODE, CID, CTIME
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM T_SYS_USERROOT
+        WHERE ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="String">
+    DELETE FROM T_SYS_USERROOT
+    WHERE ID = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insertRoot" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.UserMenuFront">
+    INSERT INTO  T_SYS_USERROOT ( UID, RID, RCODE,
+      CID, CTIME)
+    VALUES ( #{uid,jdbcType=VARCHAR}, #{rid,jdbcType=VARCHAR}, #{rcode,jdbcType=VARCHAR},
+      #{cid,jdbcType=VARCHAR}, NOW())
+  </insert>
+
+    <insert id="insertEntity" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.EntityModel">
+         INSERT INTO  ${tableName}(NAME,ADDRESS,RESPONSIBLEID,CID,CTIME,ZT)
+         VALUES (#{name},#{address},#{responsible},#{cid},NOW(),0);
+
+    </insert>
+
+    <insert id="insertUserEntity" parameterType="map">
+        INSERT INTO T_SYS_USERENTITY (UID,OID,RCODE,CTIME) VALUES (#{uid},#{oid},#{rcode},NOW())
+    </insert>
+
+    <select id="checkUserIsBind" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM ${tableName} AA
+        INNER JOIN T_SYS_USERENTITY SU ON AA.ID=SU.OID AND SU.RCODE=#{rcode}
+        WHERE AA.RESPONSIBLEID=#{uid}
+        <if test="check!=null ">
+            OR SU.UID=#{uid}
+        </if>
+    </select>
+    <insert id="insertUserComEntity" parameterType="cn.tc.ulife.platform.server.authorization.model.UocomEntity">
+        INSERT INTO T_SYS_UOCOM (COMID,OID,RCODE,CTIME,CID) VALUES (#{comid},#{oid},#{rcode},NOW(),#{cid})
+    </insert>
+
+    <select id="selectUocomComidsByKey" resultType="String"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.UocomEntity">
+        SELECT COMID
+        FROM T_SYS_UOCOM
+        WHERE OID = #{oid} AND RCODE=#{rcode}
+    </select>
+
+    <select id="selectUocomOidByKey" resultType="String"
+            parameterType="cn.tc.ulife.platform.server.authorization.model.UocomEntity">
+        SELECT OID
+        FROM T_SYS_UOCOM
+        WHERE RCODE=#{rcode} AND COMID IN
+        <foreach collection="comids" item="comids" index="index"
+                 open="(" close=")" separator=",">
+            #{comids}
+        </foreach>
+
+    </select>
+
+
+    <resultMap id="EntityResultMap" type="cn.tc.ulife.platform.server.authorization.model.EntityModel">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+
+        <collection property="comIds" ofType="cn.tc.ulife.platform.server.comm.model.CommunityBean"
+                    javaType="ArrayList" resultMap="CommResultMap"/>
+    </resultMap>
+
+    <resultMap id="CommResultMap" type="cn.tc.ulife.platform.server.comm.model.CommunityBean">
+        <id column="COMMID" property="cid" jdbcType="VARCHAR"/>
+        <result column="COMMNAME" property="name" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <select id="selectEntityModelByPrimaryKey" parameterType="map"
+            resultMap="EntityResultMap">
+        <!--  SELECT TN.ID,TN.NAME,TN.ADDRESS,TN.TEL AS PHONE
+          FROM ${tableName} AS TN
+          INNER JOIN T_SYS_UOCOM UOCOM ON TN.ID= UOCOM.OID AND UOCOM.CODE =#{code}
+          WHERE TN.ID IN
+          <foreach collection="list" item="ids" index="index"
+                   open="(" close=")" separator=",">
+              #{ids}
+          </foreach>-->
+
+        SELECT TN.ID,TN.NAME,TN.ADDRESS,TN.TEL AS PHONE ,COMM.ID AS COMMID,COMM.NAME AS COMMNAME
+        FROM ${tableName} AS TN
+        INNER JOIN T_SYS_UOCOM UOCOM ON TN.ID= UOCOM.OID AND UOCOM.CODE =#{code}
+        INNER JOIN T_COMMUNITY COMM ON UOCOM.COMID=COMM.ID
+        WHERE UOCOM.CID =#{cid}
+        <!-- <foreach collection="list" item="ids" index="index"
+                  open="(" close=")" separator=",">
+             #{ids}
+         </foreach>-->
+    </select>
+
+    <select id="selectNaturalPersonByIds" parameterType="map"
+            resultMap="EntityResultMap">
+        SELECT TN.ID,TN.ACCOUNT AS NAME ,TN.ADDRESS ,COMM.ID AS COMMID,COMM.NAME AS COMMNAME
+        FROM T_U_BASERUSER AS TN
+        INNER JOIN T_SYS_UOCOM UOCOM ON TN.ID= UOCOM.OID AND UOCOM.CODE =#{code}
+        INNER JOIN T_COMMUNITY COMM ON UOCOM.COMID=COMM.ID
+        WHERE UOCOM.CID =#{cid}
+        <!-- WHERE TN.ID IN
+         <foreach collection="list" item="ids" index="index"
+                  open="(" close=")" separator=",">
+             #{ids}
+         </foreach>-->
+    </select>
+
+    <delete id="deleteCommRelation" parameterType="cn.tc.ulife.platform.server.authorization.model.UocomEntity">
+      DELETE FROM T_SYS_UOCOM WHERE COMID=#{comid} AND RCODE=#{rcode} AND  OID=#{oid}
+    </delete>
+</mapper>

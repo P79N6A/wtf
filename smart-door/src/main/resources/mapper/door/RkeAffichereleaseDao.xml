@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.RkeAffichereleaseDao">
+
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.RkeAffichereleaseEntity" >
+            <id jdbcType="VARCHAR" column="AFR_ID" property="afrId" />
+            <result jdbcType="INTEGER" column="AFR_AC_ID" property="afrAcId" />
+            <result jdbcType="VARCHAR" column="AFR_COID" property="afrCoid" />
+            <result jdbcType="TIMESTAMP" column="AFR_CREATOR" property="afrcreator" />
+            <result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, AFR_AC_ID, AFR_COID, AFR_CREATOR, ACCOUNTSID
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.RkeAffichereleaseEntity">
+        insert into T_RKE_AFFICHERELEASE
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="afrAcId != null">AFR_AC_ID,</if>
+                <if test="afrCoid != null">AFR_COID,</if>
+                <if test="afrcreator != null">AFR_CREATOR,</if>
+                <if test="accountSid != null">ACCOUNTSID</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="afrAcId != null">#{afrAcId, jdbcType=INTEGER},</if>
+                <if test="afrCoid != null">#{afrCoid, jdbcType=VARCHAR},</if>
+                <if test="afrcreator != null">#{afrcreator, jdbcType=TIMESTAMP},</if>
+                <if test="accountSid != null">#{accountSid, jdbcType=VARCHAR}</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        delete from T_RKE_AFFICHERELEASE
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="update" parameterType="cn.tc.ulife.platform.door.mode.RkeAffichereleaseEntity">
+        update T_RKE_AFFICHERELEASE
+        <set>
+                <if test="afrAcId != null">and AFR_AC_ID =  #{afrAcId,jdbcType=INTEGER},</if>
+                <if test="afrCoid != null">and AFR_COID =  #{afrCoid,jdbcType=VARCHAR},</if>
+                <if test="afrcreator != null">and AFR_CREATOR =  #{afrcreator,jdbcType=TIMESTAMP},</if>
+                <if test="accountSid != null">and ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR}</if>
+        </set>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AFFICHERELEASE
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AFFICHERELEASE
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+    <select id="getCount" resultType="Integer" parameterType="map" >
+        select
+        count(id)
+        from T_RKE_AFFICHERELEASE
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+</mapper>

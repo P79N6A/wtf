@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.DoorCardDao">
+
+    <!--<resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.DoorCardEntity" >-->
+            <!--<result jdbcType="VARCHAR" column="CD_AUTOID" property="cdautoId" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_NAME" property="cdname" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_NUM" property="cdnum" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_CARDTYPE" property="cdcardType" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_TYPE" property="cdtype" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_HOUSEID" property="cdhouseId" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_U_HID" property="cdUhid" />-->
+            <!--<result jdbcType="TIMESTAMP" column="CD_ADDTIME" property="cdaddTime" />-->
+            <!--<result jdbcType="INTEGER" column="CD_YXSD_START" property="cdyxsdstart" />-->
+            <!--<result jdbcType="INTEGER" column="CD_YXSD_END" property="cdyxsdend" />-->
+            <!--<result jdbcType="TIMESTAMP" column="CD_YXQ_START" property="cdyxqstart" />-->
+            <!--<result jdbcType="TIMESTAMP" column="CD_YXQ_END" property="cdyxqend" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_OWNERTYPE" property="cdownerType" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_OWNERNAME" property="cdownerName" />-->
+            <!--<result jdbcType="VARCHAR" column="CD_CARDLEVEL" property="cdcardLevel" />-->
+            <!--<result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />-->
+            <!--<result jdbcType="VARCHAR" column="CREATER" property="creater" />-->
+            <!--<result jdbcType="TIMESTAMP" column="CD_LASTMODIFYTIME" property="cdlastModifyTime" />-->
+    <!--</resultMap>-->
+
+    <!--<sql id="Base_Column_List" >-->
+        <!--CD_AUTOID, CD_NAME, CD_NUM, CD_CARDTYPE, CD_TYPE, CD_HOUSEID, CD_U_HID, CD_ADDTIME, CD_YXSD_START, CD_YXSD_END, -->
+        <!--CD_YXQ_START, CD_YXQ_END, CD_OWNERTYPE, CD_OWNERNAME, CD_CARDLEVEL, ACCOUNTSID, CREATER, CD_LASTMODIFYTIME-->
+    <!--</sql>-->
+
+    <!--<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.DoorCardEntity">-->
+        <!--insert into T_RKE_CARD-->
+        <!--<trim prefix="(" suffix=")" suffixOverrides="," >-->
+                <!--<if test="cdname != null">CD_NAME,</if>-->
+                <!--<if test="cdnum != null">CD_NUM,</if>-->
+                <!--<if test="cdcardType != null">CD_CARDTYPE,</if>-->
+                <!--<if test="cdtype != null">CD_TYPE,</if>-->
+                <!--<if test="cdhouseId != null">CD_HOUSEID,</if>-->
+                <!--<if test="cdUhid != null">CD_U_HID,</if>-->
+                <!--<if test="cdaddTime != null">CD_ADDTIME,</if>-->
+                <!--<if test="cdyxsdstart != null">CD_YXSD_START,</if>-->
+                <!--<if test="cdyxsdend != null">CD_YXSD_END,</if>-->
+                <!--<if test="cdyxqstart != null">CD_YXQ_START,</if>-->
+                <!--<if test="cdyxqend != null">CD_YXQ_END,</if>-->
+                <!--<if test="cdownerType != null">CD_OWNERTYPE,</if>-->
+                <!--<if test="cdownerName != null">CD_OWNERNAME,</if>-->
+                <!--<if test="cdcardLevel != null">CD_CARDLEVEL,</if>-->
+                <!--<if test="accountSid != null">ACCOUNTSID,</if>-->
+                <!--<if test="creater != null">CREATER,</if>-->
+                <!--<if test="cdlastModifyTime != null">CD_LASTMODIFYTIME</if>-->
+        <!--</trim>-->
+        <!--<trim prefix="values (" suffix=")" suffixOverrides="," >-->
+                <!--<if test="cdname != null">#{cdname, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdnum != null">#{cdnum, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdcardType != null">#{cdcardType, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdtype != null">#{cdtype, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdhouseId != null">#{cdhouseId, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdUhid != null">#{cdUhid, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdaddTime != null">#{cdaddTime, jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdyxsdstart != null">#{cdyxsdstart, jdbcType=INTEGER},</if>-->
+                <!--<if test="cdyxsdend != null">#{cdyxsdend, jdbcType=INTEGER},</if>-->
+                <!--<if test="cdyxqstart != null">#{cdyxqstart, jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdyxqend != null">#{cdyxqend, jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdownerType != null">#{cdownerType, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdownerName != null">#{cdownerName, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdcardLevel != null">#{cdcardLevel, jdbcType=VARCHAR},</if>-->
+                <!--<if test="accountSid != null">#{accountSid, jdbcType=VARCHAR},</if>-->
+                <!--<if test="creater != null">#{creater, jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdlastModifyTime != null">#{cdlastModifyTime, jdbcType=TIMESTAMP}</if>-->
+        <!--</trim>-->
+    <!--</insert>-->
+
+    <!--<delete id="deleteByPrimaryKey" parameterType="map">-->
+        <!--delete from T_RKE_CARD-->
+        <!--where CD_AUTOID = #{id,jdbcType=VARCHAR}-->
+    <!--</delete>-->
+
+    <!--<update id="update" parameterType="cn.tc.ulife.platform.door.mode.DoorCardEntity">-->
+        <!--update T_RKE_CARD-->
+        <!--<set>-->
+                <!--<if test="cdname != null">CD_NAME =  #{cdname,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdnum != null">CD_NUM =  #{cdnum,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdcardType != null">CD_CARDTYPE =  #{cdcardType,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdtype != null">CD_TYPE =  #{cdtype,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdhouseId != null">CD_HOUSEID =  #{cdhouseId,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdUhid != null">CD_U_HID =  #{cdUhid,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdaddTime != null">CD_ADDTIME =  #{cdaddTime,jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdyxsdstart != null">CD_YXSD_START =  #{cdyxsdstart,jdbcType=INTEGER},</if>-->
+                <!--<if test="cdyxsdend != null">CD_YXSD_END =  #{cdyxsdend,jdbcType=INTEGER},</if>-->
+                <!--<if test="cdyxqstart != null">CD_YXQ_START =  #{cdyxqstart,jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdyxqend != null">CD_YXQ_END =  #{cdyxqend,jdbcType=TIMESTAMP},</if>-->
+                <!--<if test="cdownerType != null">CD_OWNERTYPE =  #{cdownerType,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdownerName != null">CD_OWNERNAME =  #{cdownerName,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdcardLevel != null">CD_CARDLEVEL =  #{cdcardLevel,jdbcType=VARCHAR},</if>-->
+                <!--<if test="accountSid != null">ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR},</if>-->
+                <!--<if test="creater != null">CREATER =  #{creater,jdbcType=VARCHAR},</if>-->
+                <!--<if test="cdlastModifyTime != null">CD_LASTMODIFYTIME =  #{cdlastModifyTime,jdbcType=TIMESTAMP}</if>-->
+        <!--</set>-->
+        <!--<where>-->
+            <!--CD_AUTOID =  #{cdautoId,jdbcType=VARCHAR}-->
+        <!--</where>-->
+    <!--</update>-->
+
+    <!--<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from T_RKE_CARD-->
+        <!--where CD_AUTOID = #{id,jdbcType=VARCHAR}-->
+    <!--</select>-->
+
+    <!--<select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from T_RKE_CARD-->
+        <!--where ${condition}-->
+    <!--</select>-->
+
+    <!--<select id="getCount" resultType="Integer" parameterType="map" >-->
+        <!--select count(1) from T_RKE_CARD-->
+        <!--where ${condition}-->
+    <!--</select>-->
+
+    <!--<select id="checkDoorCard" resultType="Integer" parameterType="cn.tc.ulife.platform.door.mode.DoorCardEntity" >-->
+        <!--select count(1) from T_RKE_CARD-->
+        <!--where CD_Num = #{cdnum} AND CD_CardType = #{cdcardType} AND CD_HouseID = #{cdhouseId}-->
+    <!--</select>-->
+
+</mapper>

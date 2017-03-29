@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.shop.dao.WareSortDao">
+
+    <!-- 添加快递公司信息 -->
+    <insert id="addWareSort" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        INSERT INTO T_SC_SPFL
+        (NAME, PID,
+        <if test="xh!=null and xh!= '' "> XH,</if>
+        CTIME, MTIME,
+        <if test="remark!=null and remark!= '' ">REMARK,</if>
+        MIP, UID, ZT,
+        <if test="code!=null and code!= '' ">  CODE,</if>
+        TYPE,ISLEAF)
+        VALUES (#{name},#{pid},
+        <if test="xh!=null and xh!= '' ">  #{xh,jdbcType=VARCHAR},</if>
+        now(),NULL,
+        <if test="remark!=null and remark!= '' "> #{remark,jdbcType=VARCHAR},</if>
+        #{mip},#{uid},0,
+        <if test="code!=null and code!= '' "> #{code,jdbcType=VARCHAR},</if>
+        #{type},
+        #{isleaf}
+        )
+    </insert>
+
+    <!-- 删除快递公司信息 -->
+    <delete id="delWareSort" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        UPDATE T_SC_SPFL SET ZT = '3' WHERE ID = #{id}
+    </delete>
+
+    <!-- 修改快递公司信息 -->
+	<update id="updWareSort" parameterType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        UPDATE T_SC_SPFL
+        <set>
+            NAME=#{name},
+            <if test="xh != null and xh!='' ">XH=#{xh,jdbcType=VARCHAR},</if>
+            MTIME=NOW(),
+            <if test="remark != null and remark!='' ">REMARK=#{remark,jdbcType=VARCHAR},</if>
+            MIP=#{mip},
+            UID=#{uid},
+            ISLEAF=#{isleaf},
+            TYPE=#{type}
+            <if test="code != null and code!='' ">,CODE=#{code,jdbcType=VARCHAR}</if>
+            <if test="zt != null and zt!=''  ">,ZT=#{zt}</if>
+        </set>
+        WHERE ID=#{id}
+    </update>
+
+    <!-- 查询快递公司信息 -->
+    <select id="queryWareSortEntity" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        SELECT * FROM T_SC_SPFL WHERE ID = #{id}
+    </select>
+
+    <!-- 查询快递公司信息列表 -->
+    <select id="queryAll" parameterType="map" resultType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        SELECT * FROM T_SC_SPFL WHERE 1=1
+        <if test="pid != null and pid != ''">
+            AND PID = #{pid}
+        </if>
+        <if test="name != null and name != ''">
+            AND NAME = #{name}
+        </if>
+        ORDER BY CTIME
+        <if test="ofset != null">
+        LIMIT #{ofset}, #{psize}
+        </if>
+    </select>
+
+    <select id="getWareSortTotal" parameterType="map" resultType="String">
+        SELECT count(*) FROM T_SC_SPFL WHERE 1=1
+        <if test="pid != null and pid != ''">
+            AND PID = #{pid}
+        </if>
+    </select>
+
+    <select id="listStoreSort" parameterType="cn.tc.ulife.platform.server.shop.entity.ScStoreEntity" resultType="cn.tc.ulife.platform.server.shop.entity.WareSortEntity">
+        SELECT DISTINCT sf.* FROM T_SC_SPFL sf
+        INNER JOIN t_sc_plinespfl pls ON pls.FLID = sf.ID
+        INNER JOIN T_SC_PRODUCTLINE pl ON pl.ID = pls.PLID AND pl.XZ = #{xz}
+        INNER JOIN T_SYS_PLINEISSUED pli ON pli.PID = pls.PLID AND pli.UID = #{id} AND pli.RCODE = 'SJGLY'
+        WHERE sf.ZT = 0 AND sf.ISLEAF = 1
+    </select>
+</mapper>

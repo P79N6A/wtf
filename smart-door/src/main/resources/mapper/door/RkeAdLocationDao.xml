@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.door.dao.RkeAdLocationDao">
+
+    <resultMap id="BaseResultMap" type="cn.tc.ulife.platform.door.mode.RkeAdLocationEntity" >
+            <id jdbcType="VARCHAR" column="ADL_ID" property="adlId" />
+            <result jdbcType="VARCHAR" column="ADL_DEVTYPEID" property="adldevTypeId" />
+            <result jdbcType="VARCHAR" column="ADL_DEVLID" property="adldevLid" />
+            <result jdbcType="VARCHAR" column="ADL_NAME" property="adlname" />
+            <result jdbcType="VARCHAR" column="ADL_IMAGESIZE" property="adlimageSize" />
+            <result jdbcType="INTEGER" column="ADL_ADTYPE" property="adladtype" />
+            <result jdbcType="VARCHAR" column="ADL_LASTLOGINNAME" property="adllastLoginName" />
+            <result jdbcType="TIMESTAMP" column="ADL_EDITDATE" property="adleditDate" />
+            <result jdbcType="VARCHAR" column="ADL_LASTEDITIP" property="adllastEditIp" />
+            <result jdbcType="VARCHAR" column="CREATER" property="creater" />
+            <result jdbcType="VARCHAR" column="ACCOUNTSID" property="accountSid" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, ADL_DEVTYPEID, ADL_DEVLID, ADL_NAME, ADL_IMAGESIZE, ADL_ADTYPE, ADL_LASTLOGINNAME, ADL_EDITDATE, ADL_LASTEDITIP, CREATER, 
+        ACCOUNTSID
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="cn.tc.ulife.platform.door.mode.RkeAdLocationEntity">
+        insert into T_RKE_AD_LOCATION
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                <if test="adldevTypeId != null">ADL_DEVTYPEID,</if>
+                <if test="adldevLid != null">ADL_DEVLID,</if>
+                <if test="adlname != null">ADL_NAME,</if>
+                <if test="adlimageSize != null">ADL_IMAGESIZE,</if>
+                <if test="adladtype != null">ADL_ADTYPE,</if>
+                <if test="adllastLoginName != null">ADL_LASTLOGINNAME,</if>
+                <if test="adleditDate != null">ADL_EDITDATE,</if>
+                <if test="adllastEditIp != null">ADL_LASTEDITIP,</if>
+                <if test="creater != null">CREATER,</if>
+                <if test="accountSid != null">ACCOUNTSID</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                <if test="adldevTypeId != null">#{adldevTypeId, jdbcType=VARCHAR},</if>
+                <if test="adldevLid != null">#{adldevLid, jdbcType=VARCHAR},</if>
+                <if test="adlname != null">#{adlname, jdbcType=VARCHAR},</if>
+                <if test="adlimageSize != null">#{adlimageSize, jdbcType=VARCHAR},</if>
+                <if test="adladtype != null">#{adladtype, jdbcType=INTEGER},</if>
+                <if test="adllastLoginName != null">#{adllastLoginName, jdbcType=VARCHAR},</if>
+                <if test="adleditDate != null">#{adleditDate, jdbcType=TIMESTAMP},</if>
+                <if test="adllastEditIp != null">#{adllastEditIp, jdbcType=VARCHAR},</if>
+                <if test="creater != null">#{creater, jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">#{accountSid, jdbcType=VARCHAR}</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="map">
+        delete from T_RKE_AD_LOCATION
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <update id="update" parameterType="cn.tc.ulife.platform.door.mode.RkeAdLocationEntity">
+        update T_RKE_AD_LOCATION
+        <set>
+                <if test="adldevTypeId != null">and ADL_DEVTYPEID =  #{adldevTypeId,jdbcType=VARCHAR},</if>
+                <if test="adldevLid != null">and ADL_DEVLID =  #{adldevLid,jdbcType=VARCHAR},</if>
+                <if test="adlname != null">and ADL_NAME =  #{adlname,jdbcType=VARCHAR},</if>
+                <if test="adlimageSize != null">and ADL_IMAGESIZE =  #{adlimageSize,jdbcType=VARCHAR},</if>
+                <if test="adladtype != null">and ADL_ADTYPE =  #{adladtype,jdbcType=INTEGER},</if>
+                <if test="adllastLoginName != null">and ADL_LASTLOGINNAME =  #{adllastLoginName,jdbcType=VARCHAR},</if>
+                <if test="adleditDate != null">and ADL_EDITDATE =  #{adleditDate,jdbcType=TIMESTAMP},</if>
+                <if test="adllastEditIp != null">and ADL_LASTEDITIP =  #{adllastEditIp,jdbcType=VARCHAR},</if>
+                <if test="creater != null">and CREATER =  #{creater,jdbcType=VARCHAR},</if>
+                <if test="accountSid != null">and ACCOUNTSID =  #{accountSid,jdbcType=VARCHAR}</if>
+        </set>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_LOCATION
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByConditions" resultMap="BaseResultMap" parameterType="map" >
+        select
+        <include refid="Base_Column_List" />
+        from T_RKE_AD_LOCATION
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+    <select id="getCount" resultType="Integer" parameterType="map" >
+        select
+        count(id)
+        from T_RKE_AD_LOCATION
+        where #{strWhere,jdbcType=BIGINT}
+    </select>
+
+</mapper>

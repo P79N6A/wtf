@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+    <context:property-placeholder location="classpath*:conf/*.properties" ignore-unresolvable="true"/>
+    <!--<context:property-placeholder location="classpath*:local.conf" ignore-unresolvable="true"/>-->
+    <import resource="classpath*:public/spring-mybatis.xml"/>
+    <import resource="classpath*:public/spring-remote-client.xml"/>
+    <!--<context:component-scan base-package="cn.tc.ulife.platform.server.*.service.*"/>-->
+    <!--<context:component-scan base-package="cn.tc.ulife.platform.server.remote.*"/>-->
+
+    <context:annotation-config/>
+
+    <aop:aspectj-autoproxy/>
+    <bean
+            class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+    <!--
+       <bean id="poolConfig" class="redis.clients.cn.tc.ulife.platform.util.jedis.JedisPoolConfig">
+           <property name="minIdle" value="${redis.minIdle}"/>
+           <property name="maxIdle" value="${Jedis_MaxIdle}"/>
+           <property name="maxTotal" value="${Jedis_MaxTotal}"/>
+           <property name="maxWaitMillis" value="${Jedis_MaxWait}"/>
+           <property name="testOnBorrow" value="${Jedis.testOnBorrow}"/>
+       </bean>
+
+    <bean id="jedisConnFactory" class="org.springframework.data.redis.connection.cn.tc.ulife.platform.util.jedis.JedisConnectionFactory">
+           <property name="hostName" value="${Jedis_PORT}"/>
+           <property name="port" value="${Jedis_PORT}"/>
+
+           <property name="usePool" value="true"/>
+           <property name="poolConfig" ref="poolConfig"/>
+       </bean>
+ -->
+    <!-- redis template definition -->
+    <!--  <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+          <property name="connectionFactory" ref="jedisConnFactory"/>
+          <property name="keySerializer">
+              <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+          </property>
+          <property name="valueSerializer">
+              <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+          </property>
+          <property name="hashKeySerializer">
+              <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+          </property>
+          <property name="hashValueSerializer">
+              <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+          </property>
+      </bean>-->
+    <!--<context:component-scan base-package="cn.njtc.ulife.api.control" />-->
+    <bean id="SpringContextUtil" class="cn.tc.ulife.platform.server.SpringContextUtil"
+          scope="singleton"></bean>
+</beans>

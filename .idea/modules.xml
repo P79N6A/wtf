@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/agent/agent.iml" filepath="$PROJECT_DIR$/agent/agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/crm/crm.iml" filepath="$PROJECT_DIR$/crm/crm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/newplatform.iml" filepath="$PROJECT_DIR$/newplatform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/public_util/public_util.iml" filepath="$PROJECT_DIR$/public_util/public_util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/service/service.iml" filepath="$PROJECT_DIR$/service/service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/smart-door/smart-door.iml" filepath="$PROJECT_DIR$/smart-door/smart-door.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uquartz/uquartz.iml" filepath="$PROJECT_DIR$/uquartz/uquartz.iml" />
+    </modules>
+  </component>
+</project>

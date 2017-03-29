@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tc.ulife.platform.server.sys.dao.SmsDao">
+	
+	 <!-- 查询用户是否注册  同时判断是否 已经最大值-->
+    <select id="querySmscode" parameterType="String" resultType="cn.tc.ulife.platform.server.sys.model.SmsCodeBean">
+        SELECT	u.Account as MOBILE,	s.`CODE` as CODE FROM 	t_u_baseuser u RIGHT JOIN 
+        t_sys_smscode s ON u.Account = s.MOBILE
+        WHERE 	s.MOBILE = #{mobile} and DATE_FORMAT(s.CTIME, '%Y-%m-%d') = DATE_FORMAT(NOW(), "%Y-%m-%d") 
+        ORDER BY s.CTIME DESC
+    </select>
+    
+    <!-- 创建短信发送记录-->
+    <insert id="insertSmscode" parameterType="cn.tc.ulife.platform.server.sys.model.SmsCodeBean">
+        INSERT INTO t_sys_smscode(UID, MOBILE,`CODE`,CTIME,MAXTIME,APP,SEND_TYPE) 
+        values(#{UID}, #{MOBILE},#{CODE},now(),#{MAXTIME},#{APP},#{SEND_TYPE})
+    </insert>
+     
+</mapper>
